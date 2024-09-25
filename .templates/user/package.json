@@ -1,0 +1,22 @@
+{
+  "name": "nodeblocks-cloud-user-custom-adapter-sample",
+  "version": "1.0.0",
+  "description": "Nodeblocks User Service Custom Adapter for NBC",
+  "main": "dist/index.js",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "tsc",
+    "start": "nbc adapter start",
+    "dev": "nbc adapter dev -i dist -e tsc"
+  },
+  "author": "Basal Inc.",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@basaldev/blocks-backend-sdk": "^2.9.0",
+    "@basaldev/blocks-user-service": "2.3.0"
+  },
+  "devDependencies": {
+    "@basaldev/nodeblocks-cloud-sdk": "^0.2.5",
+    "typescript": "^5.4.5"
+  }
+}

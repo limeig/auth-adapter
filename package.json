@@ -1,7 +1,7 @@
 {
-  "name": "nodeblocks-cloud-catalog-custom-adapter-sample",
+  "name": "user-custom-adapter",
   "version": "1.0.0",
-  "description": "Nodeblocks Catalog Service Custom Adapter for NBC",
+  "description": "Nodeblocks User Service Custom Adapter for NBC",
   "main": "dist/index.js",
   "scripts": {
     "clean": "rm -rf dist",
@@ -13,7 +13,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@basaldev/blocks-backend-sdk": "^2.9.0",
-    "@basaldev/blocks-catalog-service": "3.2.0"
+    "@basaldev/blocks-user-service": "2.3.0"
   },
   "devDependencies": {
     "@basaldev/nodeblocks-cloud-sdk": "^0.2.5",

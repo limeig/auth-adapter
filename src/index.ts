@@ -1,7 +1,6 @@
 import * as sdk from "@basaldev/blocks-backend-sdk";
 import { defaultAdapter, UserAppConfig, createNodeblocksUserApp } from "@basaldev/blocks-user-service";
-
-import { MongoClient } from 'mongodb';
+import * as handlers from  "./handlers/handlers";
 
 /**
  * Access to the configs set on the NBC dashboard based no the adapter manifest(nbc.adapter.json) by process.env
@@ -41,20 +40,6 @@ export function beforeCreateAdapter(
       user: [
         {
           name: 'children',
-          type: 'array'
-        }
-      ],
-      child: [
-        {
-          name: 'name',
-          type: 'string'
-        },
-        {
-          name: 'date-of-birth',
-          type: 'date'
-        },
-        {
-          name: 'projects',
           type: 'array'
         }
       ]
@@ -140,122 +125,62 @@ type ServiceOpts = StartServiceArgs[0];
  * This hook can be used to customize the options for starting the service
  * 
  * @param {ServiceOpts} currentOptions Service options
+ * @param {CreateUserDefaultAdapterDependencies} currentDependencies Adapter dependencies set on the NBC dashboard
  * @returns {StartServiceArgs} Updated service start args
  */
-export function beforeStartService(currentOptions: ServiceOpts): StartServiceArgs {
+export function beforeStartService(currentOptions: ServiceOpts, currentDependencies: CreateUserDefaultAdapterDependencies): StartServiceArgs {
   /**
    * Add new api endpoints here
    * https://docs.nodeblocks.dev/docs/how-tos/customization/customizing-adapters#adding-new-api-endpoints
    * 
-   * @example
-   * const updatedOptions = {
-   *   ...currentOptions,
-   *   customRoutes: [
-   *     {
-   *       handler: async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-   *         ...
-   *         return {
-   *           data: ...,
-   *           status: 200
-   *         };
-   *       },
-   *       method: 'post' as const,
-   *       path: '/coupons/use',
-   *       validators: [
-   *         async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-   *           ...
-   *           return 200;
-   *         }
-   *       ]
-   *     },
-   *   ]
-   * };
    */
   const updatedOptions = {
     ...currentOptions,
     customRoutes: [
       {
-        handler: async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-          const client = new MongoClient(process.env.ADAPTER_DATABASE_URL);
-          try {
-            // Connect to the MongoDB cluster
-            await client.connect();
-            // Make the appropriate DB calls
-            const db = client.db("izumo1_mvp");
-
-            let child = {
-              first_name: context.body["child_first_name"],
-              birthday: context.body["child_birthday"],
-              Subjects: context.body["subjects_ids"],
-              Reviews: undefined
-            };
-
-            await db.collection("children").insertOne(child);
-            let parent_id = { id: context.body["parent_id"] };
-
-            await db.collection("users").updateOne(parent_id, {
-              $addToSet: {
-                Children: child["id"]
-              }
-            });
-          } catch (e) {
-            console.error(e);
-          } finally {
-            await client.close();
-          }
-          return {
-            data: undefined,
-            status: 200
-          };
+        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          handlers.get_subjects_handler(logger, context, currentDependencies.db);
         },
         method: 'post' as const,
         path: '/children/create',
         validators: [
           async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            //  context.body
             return 200;
           }
         ]
       },
       {
-        handler: async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-          const client = new MongoClient(process.env.ADAPTER_DATABASE_URL);
-          try {
-            // Connect to the MongoDB cluster
-            await client.connect();
-            // Make the appropriate DB calls
-            const db = client.db("izumo1_mvp");
-
-            let review = {
-              date:    context.body["date"],
-              Subject: context.body["subject"],
-              hours:   context.body["hours"],
-              Asessment: undefined
-            };
-
-            await db.collection("reviews").insertOne(review);
-            let child_id = { id: context.body["child_id"] };
-
-            await db.collection("children").updateOne(child_id, {
-              $addToSet: {
-                Reviews: review["id"]
-              }
-            });
-          } catch (e) {
-            console.error(e);
-          } finally {
-            await client.close();
-          }
-          return {
-            data: undefined,
-            status: 200
-          };
+        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          handlers.create_child_handler(logger, context, currentDependencies.db);
         },
         method: 'post' as const,
-        path: '/children/log_assignment',
+        path: '/children/create',
         validators: [
           async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            //  context.body
+            return 200;
+          }
+        ]
+      },
+      {
+        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          handlers.add_review_handler(logger, context, currentDependencies.db);
+        },
+        method: 'post' as const,
+        path: '/children/add_review',
+        validators: [
+          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
+            return 200;
+          }
+        ]
+      },
+      {
+        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          handlers.get_reviews_handler(logger, context, currentDependencies.db);
+        },
+        method: 'post' as const,
+        path: '/children/get_reviews',
+        validators: [
+          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
             return 200;
           }
         ]

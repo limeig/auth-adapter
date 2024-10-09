@@ -1,5 +1,6 @@
 import * as sdk from "@basaldev/blocks-backend-sdk";
 import { defaultAdapter, UserAppConfig, createNodeblocksUserApp } from "@basaldev/blocks-user-service";
+import * as handlers from  "./handlers/handlers";
 
 /**
  * Access to the configs set on the NBC dashboard based no the adapter manifest(nbc.adapter.json) by process.env
@@ -39,20 +40,6 @@ export function beforeCreateAdapter(
       user: [
         {
           name: 'children',
-          type: 'array'
-        }
-      ],
-      child: [
-        {
-          name: 'name',
-          type: 'string'
-        },
-        {
-          name: 'date-of-birth',
-          type: 'date'
-        },
-        {
-          name: 'projects',
           type: 'array'
         }
       ]
@@ -128,7 +115,7 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  * A hook function called after the service is created
  * This hook can be used to perform any post service creation tasks
  */
-export function serviceCreated() {}
+export function serviceCreated() { }
 
 type StartServiceArgs = Parameters<ReturnType<typeof createNodeblocksUserApp>['startService']>;
 type ServiceOpts = StartServiceArgs[0];
@@ -138,39 +125,67 @@ type ServiceOpts = StartServiceArgs[0];
  * This hook can be used to customize the options for starting the service
  * 
  * @param {ServiceOpts} currentOptions Service options
+ * @param {CreateUserDefaultAdapterDependencies} currentDependencies Adapter dependencies set on the NBC dashboard
  * @returns {StartServiceArgs} Updated service start args
  */
-export function beforeStartService(currentOptions: ServiceOpts): StartServiceArgs {
+export function beforeStartService(currentOptions: ServiceOpts, currentDependencies: CreateUserDefaultAdapterDependencies): StartServiceArgs {
   /**
    * Add new api endpoints here
    * https://docs.nodeblocks.dev/docs/how-tos/customization/customizing-adapters#adding-new-api-endpoints
    * 
-   * @example
-   * const updatedOptions = {
-   *   ...currentOptions,
-   *   customRoutes: [
-   *     {
-   *       handler: async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-   *         ...
-   *         return {
-   *           data: ...,
-   *           status: 200
-   *         };
-   *       },
-   *       method: 'post' as const,
-   *       path: '/coupons/use',
-   *       validators: [
-   *         async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-   *           ...
-   *           return 200;
-   *         }
-   *       ]
-   *     },
-   *   ]
-   * };
    */
   const updatedOptions = {
     ...currentOptions,
+    customRoutes: [
+      {
+        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          handlers.get_subjects_handler(logger, context, currentDependencies.db);
+        },
+        method: 'post' as const,
+        path: '/children/create',
+        validators: [
+          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
+            return 200;
+          }
+        ]
+      },
+      {
+        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          handlers.create_child_handler(logger, context, currentDependencies.db);
+        },
+        method: 'post' as const,
+        path: '/children/create',
+        validators: [
+          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
+            return 200;
+          }
+        ]
+      },
+      {
+        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          handlers.add_review_handler(logger, context, currentDependencies.db);
+        },
+        method: 'post' as const,
+        path: '/children/add_review',
+        validators: [
+          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
+            return 200;
+          }
+        ]
+      },
+      {
+        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          handlers.get_reviews_handler(logger, context, currentDependencies.db);
+        },
+        method: 'post' as const,
+        path: '/children/get_reviews',
+        validators: [
+          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
+            return 200;
+          }
+        ]
+      }
+    ]
   };
   return [updatedOptions];
 }
@@ -179,4 +194,4 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
  * A hook function called after the service is started
  * This hook can be used to perform any post service starting tasks
  */
-export function serviceStarted() {}
+export function serviceStarted() { }

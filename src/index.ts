@@ -40,8 +40,8 @@ export function beforeCreateAdapter(
       user: [
         {
           name: 'children',
-          type: 'array'
-        }
+          type: 'array' as const
+        },
       ]
     }
   };
@@ -139,7 +139,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
     customRoutes: [
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          handlers.get_subjects_handler(logger, context, currentDependencies.db);
+          return handlers.get_subjects_handler(logger, context, currentDependencies.db);
         },
         method: 'post' as const,
         path: '/children/create',
@@ -151,7 +151,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          handlers.create_child_handler(logger, context, currentDependencies.db);
+          return handlers.create_child_handler(logger, context, currentDependencies.db);
         },
         method: 'post' as const,
         path: '/children/create',
@@ -163,7 +163,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          handlers.add_review_handler(logger, context, currentDependencies.db);
+          return handlers.add_review_handler(logger, context, currentDependencies.db);
         },
         method: 'post' as const,
         path: '/children/add_review',
@@ -175,7 +175,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          handlers.get_reviews_handler(logger, context, currentDependencies.db);
+          return handlers.get_reviews_handler(logger, context, currentDependencies.db);
         },
         method: 'post' as const,
         path: '/children/get_reviews',

@@ -116,9 +116,14 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  * This hook can be used to perform any post service creation tasks
  */
 export function serviceCreated() {
-  globalThis.db = sdk.mongo.singletonMongoConn(process.env.ADAPTER_DATABASE_URL);
-  console.info("Type of db in current dependancies: ", typeof globalThis.db);
+    connectDb();
  }
+
+async function connectDb()
+{
+  globalThis.db = await sdk.mongo.singletonMongoConn(process.env.ADAPTER_DATABASE_URL);
+  console.info("Type of db in current dependancies: ", typeof globalThis.db);
+}
 
 type StartServiceArgs = Parameters<ReturnType<typeof createNodeblocksUserApp>['startService']>;
 type ServiceOpts = StartServiceArgs[0];

@@ -42,7 +42,7 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
             Parent: context.body["parent_id"]
         };
 
-        const result = sdk.mongo.find(logger, db, categoryCollection, { Parent: context.body["parent_id"] });
+        const result = sdk.mongo.find(logger, db, childrenCollection, { Parent: context.body["parent_id"] });
 
         return {
             data: result,

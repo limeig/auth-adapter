@@ -139,10 +139,9 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
     customRoutes: [
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          const { db } = globalThis;
+          console.info("Type of globalthis db: ", typeof db);
           console.info("in handler");
-          console.info(typeof currentDependencies);
-          console.info(typeof currentDependencies.db);
-          logger.debug("Type of db: ", typeof currentDependencies.db);
           return handlers.get_children_handler(logger, context, currentDependencies.db);
         },
         method: 'get' as const,

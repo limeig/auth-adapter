@@ -128,10 +128,9 @@ type ServiceOpts = StartServiceArgs[0];
  * This hook can be used to customize the options for starting the service
  * 
  * @param {ServiceOpts} currentOptions Service options
- * @param {CreateUserDefaultAdapterDependencies} currentDependencies Adapter dependencies set on the NBC dashboard
  * @returns {StartServiceArgs} Updated service start args
  */
-export function beforeStartService(currentOptions: ServiceOpts, currentDependencies: CreateUserDefaultAdapterDependencies): StartServiceArgs {
+export function beforeStartService(currentOptions: ServiceOpts): StartServiceArgs {
   /**
    * Add new api endpoints here
    * https://docs.nodeblocks.dev/docs/how-tos/customization/customizing-adapters#adding-new-api-endpoints
@@ -144,7 +143,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
           console.info("Type of globalthis db: ", typeof globalThis.db);
-          return handlers.get_children_handler(logger, context, currentDependencies.db);
+          return handlers.get_children_handler(logger, context, globalThis.db);
         },
         method: 'get' as const,
         path: '/children/get',
@@ -156,7 +155,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.get_subjects_handler(logger, context, currentDependencies.db);
+          return handlers.get_subjects_handler(logger, context, globalThis.db);
         },
         method: 'get' as const,
         path: '/subjects/get',
@@ -168,7 +167,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.create_child_handler(logger, context, currentDependencies.db);
+          return handlers.create_child_handler(logger, context, globalThis.db);
         },
         method: 'post' as const,
         path: '/children/create',
@@ -180,7 +179,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.add_review_handler(logger, context, currentDependencies.db);
+          return handlers.add_review_handler(logger, context, globalThis.db);
         },
         method: 'post' as const,
         path: '/children/add_review',
@@ -192,7 +191,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.get_reviews_handler(logger, context, currentDependencies.db);
+          return handlers.get_reviews_handler(logger, context, globalThis.db);
         },
         method: 'post' as const,
         path: '/children/get_reviews',

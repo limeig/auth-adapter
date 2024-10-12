@@ -34,6 +34,9 @@ export function beforeCreateAdapter(
    *   }
    * };
    */
+  console.info("Type of db in current dependancies: ", typeof currentDependencies.db);
+
+  globalThis.db = currentDependencies.db;
   const updatedOptions = {
     ...currentOptions,
     customFields: {
@@ -134,13 +137,13 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
    * https://docs.nodeblocks.dev/docs/how-tos/customization/customizing-adapters#adding-new-api-endpoints
    * 
    */
+
   const updatedOptions = {
     ...currentOptions,
     customRoutes: [
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
           console.info("Type of globalthis db: ", typeof globalThis.db);
-          console.info("in handler");
           return handlers.get_children_handler(logger, context, currentDependencies.db);
         },
         method: 'get' as const,

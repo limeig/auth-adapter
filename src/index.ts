@@ -139,10 +139,22 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
     customRoutes: [
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          return handlers.get_children_handler(logger, context, currentDependencies.db);
+        },
+        method: 'get' as const,
+        path: '/children/get',
+        validators: [
+          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
+            return 200;
+          }
+        ]
+      },
+      {
+        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
           return handlers.get_subjects_handler(logger, context, currentDependencies.db);
         },
-        method: 'post' as const,
-        path: '/children/create',
+        method: 'get' as const,
+        path: '/subjects/get',
         validators: [
           async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
             return 200;

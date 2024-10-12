@@ -11,6 +11,7 @@ class ChildEntity extends sdk.mongo.BaseMongoEntity {
         public first_name?: string,
         public birthday?: string,
         public Subjects?: Array<string>,
+        public Parent?: string,
         public Reviews?: Array<string> | undefined
     ) {
         super();
@@ -27,6 +28,33 @@ class ReviewEntity extends sdk.mongo.BaseMongoEntity {
     ) {
         super();
     }
+}
+
+export async function get_children_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext, db: sdk.mongo.Db | string): Promise<{
+    data: any,
+    status: number
+}> {
+    if (typeof db === 'string')
+        return;
+
+    try {
+        let query = {
+            Parent: context.body["parent_id"]
+        };
+
+        const result = sdk.mongo.find(logger, db, categoryCollection, { Parent: context.body["parent_id"] });
+
+        return {
+            data: result,
+            status: 200
+        };
+    } catch (e) {
+        console.error(e);
+    }
+    return {
+        data: undefined,
+        status: 500
+    };
 }
 
 export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext, db: sdk.mongo.Db | string): Promise<{
@@ -73,6 +101,7 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
             context.body["child_first_name"],
             context.body["child_birthday"],
             context.body["subjects_ids"],
+            context.body["parent_id"],
             undefined
         );
 

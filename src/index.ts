@@ -115,12 +115,14 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  * A hook function called after the service is created
  * This hook can be used to perform any post service creation tasks
  */
-export function serviceCreated() {
-    connectDb();
- }
+export function serviceCreated() {}
+
 
 async function connectDb()
 {
+  if (typeof globalThis.db !== undefined)
+    return;
+
   globalThis.db = await sdk.mongo.singletonMongoConn(process.env.ADAPTER_DATABASE_URL);
   console.info("Type of db in current dependancies: ", typeof globalThis.db);
 }
@@ -146,7 +148,8 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
     ...currentOptions,
     customRoutes: [
       {
-        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
+          connectDb();
           console.info("Type of globalthis db: ", typeof globalThis.db);
           return handlers.get_children_handler(logger, context, globalThis.db);
         },
@@ -160,6 +163,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          connectDb();
           return handlers.get_subjects_handler(logger, context, globalThis.db);
         },
         method: 'get' as const,
@@ -172,6 +176,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          connectDb();
           return handlers.create_child_handler(logger, context, globalThis.db);
         },
         method: 'post' as const,
@@ -184,6 +189,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          connectDb();
           return handlers.add_review_handler(logger, context, globalThis.db);
         },
         method: 'post' as const,
@@ -196,6 +202,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
+          connectDb();
           return handlers.get_reviews_handler(logger, context, globalThis.db);
         },
         method: 'post' as const,

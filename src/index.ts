@@ -120,11 +120,13 @@ export function serviceCreated() {}
 
 async function connectDb()
 {
+  console.info("Type of db before singleton: ", typeof globalThis.db);
+
   if (typeof globalThis.db !== undefined)
     return;
 
   globalThis.db = await sdk.mongo.singletonMongoConn(process.env.ADAPTER_DATABASE_URL);
-  console.info("Type of db in current dependancies: ", typeof globalThis.db);
+  console.info("Type of db after singleton: ", typeof globalThis.db);
 }
 
 type StartServiceArgs = Parameters<ReturnType<typeof createNodeblocksUserApp>['startService']>;

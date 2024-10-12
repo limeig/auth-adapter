@@ -35,15 +35,13 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
     status: number
 }> {
     if (typeof db === 'string')
-        return;
-
-    try {
-        let query = {
-            Parent: context.body["parent_id"]
+        return {
+            data: undefined,
+            status: 500
         };
 
-        const result = sdk.mongo.find(logger, db, childrenCollection, { Parent: context.body["parent_id"] });
-
+    try {
+        const result = await sdk.mongo.find(logger, db, childrenCollection, { Parent: context.body["parent_id"] });
         return {
             data: result,
             status: 200
@@ -65,7 +63,7 @@ export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adap
         return;
 
     try {
-        const result = sdk.mongo.aggregate(logger, db, subjectCollection, [
+        const result = await sdk.mongo.aggregate(logger, db, subjectCollection, [
             { $lookup:
                 {
                    from: categoryCollection,

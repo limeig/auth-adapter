@@ -34,9 +34,6 @@ export function beforeCreateAdapter(
    *   }
    * };
    */
-  console.info("Type of db in current dependancies: ", typeof currentDependencies.db);
-
-  globalThis.db = currentDependencies.db;
   const updatedOptions = {
     ...currentOptions,
     customFields: {
@@ -118,7 +115,10 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  * A hook function called after the service is created
  * This hook can be used to perform any post service creation tasks
  */
-export function serviceCreated() { }
+export function serviceCreated() {
+  globalThis.db = sdk.mongo.singletonMongoConn(process.env.ADAPTER_DATABASE_URL);
+  console.info("Type of db in current dependancies: ", typeof globalThis.db);
+ }
 
 type StartServiceArgs = Parameters<ReturnType<typeof createNodeblocksUserApp>['startService']>;
 type ServiceOpts = StartServiceArgs[0];

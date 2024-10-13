@@ -2,7 +2,8 @@ import * as sdk from "@basaldev/blocks-backend-sdk";
 import { defaultAdapter, UserAppConfig, createNodeblocksUserApp } from "@basaldev/blocks-user-service";
 import * as handlers from  "./handlers/handlers";
 import * as validators from  "./validators/validators";
-import {database, up} from 'migrate-mongo';
+import {config, database, up} from 'migrate-mongo';
+import { DATABASE_NAME } from "./constant";
 
 /**
  * Access to the configs set on the NBC dashboard based no the adapter manifest(nbc.adapter.json) by process.env
@@ -118,6 +119,17 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  * This hook can be used to perform any post service creation tasks
  */
 export function serviceCreated() {
+  const myConfig = {
+    mongodb: {
+      url: process.env.ADAPTER_DATABASE_UR,
+      databaseName: DATABASE_NAME,
+    },
+    migrationsDir: "migrations",
+    changelogCollectionName: "changelog",
+    migrationFileExtension: ".js"
+};
+
+  config.set(myConfig);
   const migrateDatabase = async () => {
     const { db, client } = await database.connect();
     await up(db, client);

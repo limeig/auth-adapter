@@ -19,6 +19,7 @@ module.exports = {
       const parsedSubjects = subjects.map((subject) => {
         return {
           _id: new ObjectId(subject.id),
+          category: subject.category.map((category) => new ObjectId(category)),
           ...subject,
         };
       });

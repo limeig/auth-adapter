@@ -138,9 +138,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
     ...currentOptions,
     customRoutes: [
       {
-        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-          return handlers.get_children_handler(logger, context);
-        },
+        handler: handlers.get_children_handler,
         method: 'get' as const,
         path: '/children/get',
         validators: [
@@ -150,9 +148,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         ]
       },
       {
-        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.get_subjects_handler(logger, context);
-        },
+        handler: handlers.get_subjects_handler,
         method: 'get' as const,
         path: '/subjects/get',
         validators: [
@@ -162,9 +158,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         ]
       },
       {
-        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.create_child_handler(logger, context);
-        },
+        handler: handlers.create_child_handler,
         method: 'post' as const,
         path: '/children/create',
         validators: [
@@ -174,9 +168,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         ]
       },
       {
-        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.add_review_handler(logger, context);
-        },
+        handler: handlers.add_review_handler,
         method: 'post' as const,
         path: '/children/add_review',
         validators: [
@@ -186,9 +178,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         ]
       },
       {
-        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.get_reviews_handler(logger, context);
-        },
+        handler: handlers.get_reviews_handler,
         method: 'post' as const,
         path: '/children/get_reviews',
         validators: [

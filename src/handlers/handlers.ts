@@ -168,7 +168,7 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
         const reviewObjectEntity: ReviewEntity = new ReviewEntity(
             context.body["date"],
             context.body["subject_id"],
-            context.body["hours"],
+            context.body["duration"],
             context.body["child_id"],
             undefined
         );

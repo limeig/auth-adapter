@@ -1,6 +1,7 @@
 import * as sdk from "@basaldev/blocks-backend-sdk";
 import { defaultAdapter, UserAppConfig, createNodeblocksUserApp } from "@basaldev/blocks-user-service";
 import * as handlers from  "./handlers/handlers";
+import * as validators from  "./validators/validators";
 
 /**
  * Access to the configs set on the NBC dashboard based no the adapter manifest(nbc.adapter.json) by process.env
@@ -142,9 +143,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'get' as const,
         path: '/children/get',
         validators: [
-          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            return 200;
-          }
+          validators.validate_parent_id
         ]
       },
       {
@@ -152,9 +151,6 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'get' as const,
         path: '/subjects/get',
         validators: [
-          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            return 200;
-          }
         ]
       },
       {
@@ -162,9 +158,10 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'post' as const,
         path: '/children/create',
         validators: [
-          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            return 200;
-          }
+          validators.validate_parent_id,
+          validators.validate_child_name,
+          validators.validate_child_bday,
+          validators.validate_subject_list
         ]
       },
       {
@@ -172,9 +169,10 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'post' as const,
         path: '/children/add_review',
         validators: [
-          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            return 200;
-          }
+          validators.validate_child_id,
+          validators.validate_date, 
+          validators.validate_subject_id,
+          validators.validate_duration
         ]
       },
       {
@@ -182,9 +180,8 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'post' as const,
         path: '/children/get_reviews',
         validators: [
-          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            return 200;
-          }
+          validators.validate_child_id,
+          validators.validate_subject_id
         ]
       }
     ]

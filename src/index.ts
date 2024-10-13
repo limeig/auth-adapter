@@ -121,7 +121,7 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
 export function serviceCreated() {
   const myConfig = {
     mongodb: {
-      url: process.env.ADAPTER_DATABASE_UR,
+      url: process.env.ADAPTER_DATABASE_URL,
       databaseName: DATABASE_NAME,
     },
     migrationsDir: "migrations",

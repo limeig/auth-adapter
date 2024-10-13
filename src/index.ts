@@ -118,17 +118,17 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  * This hook can be used to perform any post service creation tasks
  */
 export function serviceCreated() {
-  config.set({
-    mongodb: {
-      url: process.env.ADAPTER_DATABASE_URL,
-      databaseName: DATABASE_NAME,
-    },
-    migrationsDir: path.resolve(__dirname, 'src/migrations'),
-    changelogCollectionName: "changelog",
-    migrationFileExtension: ".ts",
-    useFileHash: false,
-  });
   const migrateDatabase = async () => {
+    config.set({
+      mongodb: {
+        url: process.env.ADAPTER_DATABASE_URL,
+        databaseName: DATABASE_NAME,
+      },
+      migrationsDir: path.resolve(__dirname, 'src/see?'),
+      changelogCollectionName: "changelog",
+      migrationFileExtension: ".ts",
+      useFileHash: false,
+    });
     const { db, client } = await database.connect();
     await up(db, client);
   }

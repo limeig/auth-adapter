@@ -1,4 +1,4 @@
-import { DATABASE_NAME } from "../constant";
+import { Collections, DATABASE_NAME } from "../constant";
 import {MongoClient, ObjectId} from 'mongodb';
 import { categories, subjects } from "./lib/init-data";
 
@@ -14,7 +14,7 @@ module.exports = {
           ...category,
         };
       });
-      await db.collection('categories').insertMany(parsedCategories);
+      await db.collection(Collections.categoryCollection).insertMany(parsedCategories);
 
       const parsedSubjects = subjects.map((subject) => {
         return {
@@ -23,7 +23,7 @@ module.exports = {
           ...subject,
         };
       });
-      await db.collection('subjects').insertMany(parsedSubjects);
+      await db.collection(Collections.subjectCollection).insertMany(parsedSubjects);
 
       console.log("Migrated successfully");
     } catch (e) {

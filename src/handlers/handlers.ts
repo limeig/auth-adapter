@@ -1,8 +1,9 @@
 import * as sdk from "@basaldev/blocks-backend-sdk";
 import { connectDb } from "../helpers";
 import { Collections } from "../constant";
+import { ObjectId } from 'mongodb';
 
-class ChildEntity extends sdk.mongo.BaseMongoEntity {
+class ChildEntity implements sdk.mongo.BaseMongoEntity {
     constructor(
         public first_name?: string,
         public birthday?: string,
@@ -10,8 +11,13 @@ class ChildEntity extends sdk.mongo.BaseMongoEntity {
         public Parent?: string,
         public Reviews?: Array<string> | undefined
     ) {
-        super();
     }
+    
+    _id: ObjectId; 
+    createdAt: Date; 
+    delFlg: 0 | 1; 
+    id: string; 
+    updatedAt: Date; 
 }
 
 class ReviewEntity extends sdk.mongo.BaseMongoEntity {

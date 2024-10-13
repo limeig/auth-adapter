@@ -1,5 +1,4 @@
 import { DATABASE_NAME } from "../constant";
-
 import {MongoClient, ObjectId} from 'mongodb';
 import { categories, subjects } from "./lib/init-data";
 

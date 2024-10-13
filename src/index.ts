@@ -2,9 +2,6 @@ import * as sdk from "@basaldev/blocks-backend-sdk";
 import { defaultAdapter, UserAppConfig, createNodeblocksUserApp } from "@basaldev/blocks-user-service";
 import * as handlers from  "./handlers/handlers";
 import {database, up} from 'migrate-mongo';
-import { DATABASE_NAME } from "./constant";
-import {MongoClient} from 'mongodb';
-
 
 /**
  * Access to the configs set on the NBC dashboard based no the adapter manifest(nbc.adapter.json) by process.env

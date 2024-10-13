@@ -117,18 +117,6 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  */
 export function serviceCreated() {}
 
-
-async function connectDb()
-{
-  console.info("Type of db before singleton: ", typeof globalThis.db);
-
-  if (typeof globalThis.db !== 'undefined')
-    return;
-
-  globalThis.db = await sdk.mongo.singletonMongoConn(process.env.ADAPTER_DATABASE_URL);
-  console.info("Type of db after singleton: ", typeof globalThis.db);
-}
-
 type StartServiceArgs = Parameters<ReturnType<typeof createNodeblocksUserApp>['startService']>;
 type ServiceOpts = StartServiceArgs[0];
 
@@ -151,9 +139,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
     customRoutes: [
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-          connectDb();
-          console.info("Type of globalthis db: ", typeof globalThis.db);
-          return handlers.get_children_handler(logger, context, globalThis.db);
+          return handlers.get_children_handler(logger, context);
         },
         method: 'get' as const,
         path: '/children/get',
@@ -165,8 +151,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          connectDb();
-          return handlers.get_subjects_handler(logger, context, globalThis.db);
+          return handlers.get_subjects_handler(logger, context);
         },
         method: 'get' as const,
         path: '/subjects/get',
@@ -178,8 +163,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          connectDb();
-          return handlers.create_child_handler(logger, context, globalThis.db);
+          return handlers.create_child_handler(logger, context);
         },
         method: 'post' as const,
         path: '/children/create',
@@ -191,8 +175,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          connectDb();
-          return handlers.add_review_handler(logger, context, globalThis.db);
+          return handlers.add_review_handler(logger, context);
         },
         method: 'post' as const,
         path: '/children/add_review',
@@ -204,8 +187,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       },
       {
         handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          connectDb();
-          return handlers.get_reviews_handler(logger, context, globalThis.db);
+          return handlers.get_reviews_handler(logger, context);
         },
         method: 'post' as const,
         path: '/children/get_reviews',

@@ -2,6 +2,7 @@ import * as sdk from "@basaldev/blocks-backend-sdk";
 import { defaultAdapter, UserAppConfig, createNodeblocksUserApp } from "@basaldev/blocks-user-service";
 import * as handlers from  "./handlers/handlers";
 import * as validators from  "./validators/validators";
+import {database, up} from 'migrate-mongo';
 
 /**
  * Access to the configs set on the NBC dashboard based no the adapter manifest(nbc.adapter.json) by process.env
@@ -116,7 +117,13 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  * A hook function called after the service is created
  * This hook can be used to perform any post service creation tasks
  */
-export function serviceCreated() {}
+export function serviceCreated() {
+  const migrateDatabase = async () => {
+    const { db, client } = await database.connect();
+    await up(db, client);
+  }
+  migrateDatabase();
+}
 
 type StartServiceArgs = Parameters<ReturnType<typeof createNodeblocksUserApp>['startService']>;
 type ServiceOpts = StartServiceArgs[0];

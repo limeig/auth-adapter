@@ -23,7 +23,7 @@ module.exports = {
           ...subject,
         };
       });
-      await db.collection('subjects').insertOne(parsedSubjects);
+      await db.collection('subjects').insertMany(parsedSubjects);
 
       console.log("Migrated successfully");
     } catch (e) {

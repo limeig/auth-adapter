@@ -124,7 +124,7 @@ export function serviceCreated() {
       url: process.env.ADAPTER_DATABASE_URL,
       databaseName: DATABASE_NAME,
     },
-    migrationsDir: "./src/migrations",
+    migrationsDir: "/src/migrations",
     changelogCollectionName: "changelog",
     migrationFileExtension: ".js"
 };

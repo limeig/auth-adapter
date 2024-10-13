@@ -2,7 +2,8 @@ import * as sdk from "@basaldev/blocks-backend-sdk";
 
 export namespace get {
     export async function validate_parent_id(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) {
-        if (!context.params["parent_id"]) throw new sdk.NBError({
+        console.log("Params: ", context.params);
+        if (!context.params['parent_id']) throw new sdk.NBError({
             code: 'invalid_get_request',
             httpCode: 400,
             message: 'parent_id is required',

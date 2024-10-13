@@ -1,11 +1,6 @@
 import * as sdk from "@basaldev/blocks-backend-sdk";
 import { connectDb } from "../helpers";
-
-const userCollection = 'users';
-const childrenCollection = 'children';
-const categoryCollection = 'category';
-const subjectCollection = 'subjects';
-const reviewCollection = 'review';
+import { Collections } from "../constant";
 
 class ChildEntity extends sdk.mongo.BaseMongoEntity {
     constructor(
@@ -37,19 +32,18 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
 }> {
     try {
         await connectDb();
-        console.info("Type of globalthis db: ", typeof globalThis.db);
-        const result = await sdk.mongo.find(logger, globalThis.db, childrenCollection, { Parent: context.body["parent_id"] });
+        const result = await sdk.mongo.find(logger, globalThis.db, Collections.childrenCollection, { Parent: context.body["parent_id"] });
         return {
             data: result,
             status: 200
         };
     } catch (e) {
         console.error(e);
+        return {
+            data: false,
+            status: 500
+        };
     }
-    return {
-        data: undefined,
-        status: 500
-    };
 }
 
 export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
@@ -58,10 +52,10 @@ export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adap
 }> {
     try {
         await connectDb();
-        const result = await sdk.mongo.aggregate(logger, globalThis.db, subjectCollection, [
+        const result = await sdk.mongo.aggregate(logger, globalThis.db, Collections.subjectCollection, [
             { $lookup:
                 {
-                   from: categoryCollection,
+                   from: Collections.categoryCollection,
                    localField: 'category_id',
                    foreignField: 'id',
                    as: 'category'
@@ -75,11 +69,11 @@ export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adap
         };
     } catch (e) {
         console.error(e);
+        return {
+            data: false,
+            status: 500
+        };
     }
-    return {
-        data: undefined,
-        status: 500
-    };
 }
 
 export async function create_child_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
@@ -99,7 +93,7 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
         const { id } = await sdk.mongo.create<ChildEntity>(
             logger,
             globalThis.db,
-            childrenCollection,
+            Collections.childrenCollection,
             childObjectEntity
         );
 
@@ -108,7 +102,7 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
         await sdk.mongo.updateMany(
             logger,
             globalThis.db,
-            userCollection,
+            Collections.userCollection,
             parent_id,
             {
                 $addToSet: {
@@ -116,13 +110,17 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
                 }
             }
         );
+        return {
+            data: id,
+            status: 200
+        };        
     } catch (e) {
         console.error(e);
+        return {
+            data: false,
+            status: 200
+        };
     }
-    return {
-        data: undefined,
-        status: 200
-    };
 }
 
 export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
@@ -136,18 +134,18 @@ export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapt
         };
 
         await connectDb();
-        const result = await sdk.mongo.find(logger, globalThis.db, reviewCollection, query);
+        const result = await sdk.mongo.find(logger, globalThis.db, Collections.reviewCollection, query);
         return {
             data: result,
             status: 200
         };
     } catch (e) {
         console.error(e);
+        return {
+            data: false,
+            status: 500
+        };
     }
-    return {
-        data: undefined,
-        status: 500
-    };
 }
 
 export async function add_review_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
@@ -167,7 +165,7 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
         const id = await sdk.mongo.create(
             logger,
             globalThis.db,
-            reviewCollection,
+            Collections.reviewCollection,
             reviewObjectEntity);
 
         let child_id = { id: context.body["child_id"] };
@@ -175,17 +173,21 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
         await sdk.mongo.updateMany(
             logger,
             globalThis.db,
-            childrenCollection,
+            Collections.childrenCollection,
             child_id, {
             $addToSet: {
                 Reviews: id
             }
         });
+        return {
+            data: id,
+            status: 200
+        };
     } catch (e) {
         console.error(e);
+        return {
+            data: false,
+            status: 200
+        };
     }
-    return {
-        data: undefined,
-        status: 200
-    };
 }

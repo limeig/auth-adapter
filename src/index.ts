@@ -124,7 +124,7 @@ export function serviceCreated() {
       url: process.env.ADAPTER_DATABASE_URL,
       databaseName: DATABASE_NAME,
     },
-    migrationsDir: "migrations",
+    migrationsDir: "./src/migrations",
     changelogCollectionName: "changelog",
     migrationFileExtension: ".js"
 };
@@ -162,7 +162,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'get' as const,
         path: '/children/get',
         validators: [
-          validators.validate_parent_id
+          validators.get.validate_parent_id
         ]
       },
       {
@@ -177,10 +177,10 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'post' as const,
         path: '/children/create',
         validators: [
-          validators.validate_parent_id,
-          validators.validate_child_name,
-          validators.validate_child_bday,
-          validators.validate_subject_list
+          validators.post.validate_parent_id,
+          validators.post.validate_child_name,
+          validators.post.validate_child_bday,
+          validators.post.validate_subject_list
         ]
       },
       {
@@ -188,19 +188,19 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'post' as const,
         path: '/children/add_review',
         validators: [
-          validators.validate_child_id,
-          validators.validate_date, 
-          validators.validate_subject_id,
-          validators.validate_duration
+          validators.post.validate_child_id,
+          validators.post.validate_date, 
+          validators.post.validate_subject_id,
+          validators.post.validate_duration
         ]
       },
       {
         handler: handlers.get_reviews_handler,
-        method: 'post' as const,
+        method: 'get' as const,
         path: '/children/get_reviews',
         validators: [
-          validators.validate_child_id,
-          validators.validate_subject_id
+          validators.get.validate_child_id,
+          validators.get.validate_subject_id
         ]
       }
     ]

@@ -184,7 +184,7 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
 
         await sdk.mongo.updateMany(
             logger,
-            db,
+            globalThis.db,
             childrenCollection,
             child_id, {
             $addToSet: {

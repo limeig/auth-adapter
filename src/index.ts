@@ -118,21 +118,16 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  * This hook can be used to perform any post service creation tasks
  */
 export function serviceCreated() {
-  const migrateDatabase = async () => {
-    config.set({
-      mongodb: {
-        url: process.env.ADAPTER_DATABASE_URL,
-        databaseName: DATABASE_NAME,
-      },
-      migrationsDir: path.resolve(__dirname, 'src/see?'),
-      changelogCollectionName: "changelog",
-      migrationFileExtension: ".ts",
-      useFileHash: false,
-    });
-    const { db, client } = await database.connect();
-    await up(db, client);
-  }
-  migrateDatabase();
+  config.set({
+    mongodb: {
+      url: process.env.ADAPTER_DATABASE_URL,
+      databaseName: DATABASE_NAME,
+    },
+    migrationsDir: path.resolve(__dirname, 'src/migrations'),
+    changelogCollectionName: "changelog",
+    migrationFileExtension: ".ts",
+    useFileHash: false,
+  });
 }
 
 type StartServiceArgs = Parameters<ReturnType<typeof createNodeblocksUserApp>['startService']>;
@@ -210,4 +205,10 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
  * A hook function called after the service is started
  * This hook can be used to perform any post service starting tasks
  */
-export function serviceStarted() { }
+export function serviceStarted() {   
+  const migrateDatabase = async () => {
+    const { db, client } = await database.connect();
+    await up(db, client);
+  }
+  migrateDatabase();
+}

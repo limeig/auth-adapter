@@ -3,7 +3,7 @@ import * as handlers from  "./handlers/handlers";
 import * as validators from  "./validators/validators";
 import {config, database, up} from 'migrate-mongo';
 import { DATABASE_NAME } from "./constant";
-
+const path = require('path');
 /**
  * Access to the configs set on the NBC dashboard based no the adapter manifest(nbc.adapter.json) by process.env
  * 
@@ -123,7 +123,7 @@ export function serviceCreated() {
       url: process.env.ADAPTER_DATABASE_URL,
       databaseName: DATABASE_NAME,
     },
-    migrationsDir: "./migrations",
+    migrationsDir: path.resolve(__dirname, 'src/migrations'),
     changelogCollectionName: "changelog",
     migrationFileExtension: ".ts",
     useFileHash: false,

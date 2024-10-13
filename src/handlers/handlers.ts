@@ -1,4 +1,5 @@
 import * as sdk from "@basaldev/blocks-backend-sdk";
+import { connectDb } from "../helpers";
 
 const userCollection = 'users';
 const childrenCollection = 'children';
@@ -28,17 +29,6 @@ class ReviewEntity extends sdk.mongo.BaseMongoEntity {
     ) {
         super();
     }
-}
-
-async function connectDb()
-{
-  console.info("Type of db before singleton: ", typeof globalThis.db);
-
-  if (typeof globalThis.db !== 'undefined')
-    return;
-
-  globalThis.db = await sdk.mongo.singletonMongoConn(process.env.ADAPTER_DATABASE_URL);
-  console.info("Type of db after singleton: ", typeof globalThis.db);
 }
 
 export async function get_children_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{

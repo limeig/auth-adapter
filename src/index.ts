@@ -1,6 +1,7 @@
 import * as sdk from "@basaldev/blocks-backend-sdk";
 import { defaultAdapter, UserAppConfig, createNodeblocksUserApp } from "@basaldev/blocks-user-service";
 import * as handlers from  "./handlers/handlers";
+import {database, up} from 'migrate-mongo';
 
 /**
  * Access to the configs set on the NBC dashboard based no the adapter manifest(nbc.adapter.json) by process.env
@@ -115,7 +116,13 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  * A hook function called after the service is created
  * This hook can be used to perform any post service creation tasks
  */
-export function serviceCreated() { }
+export function serviceCreated() {
+  const migrateDatabase = async () => {
+    const { db, client } = await database.connect();
+    await up(db, client);
+  }
+  migrateDatabase();
+}
 
 type StartServiceArgs = Parameters<ReturnType<typeof createNodeblocksUserApp>['startService']>;
 type ServiceOpts = StartServiceArgs[0];
@@ -125,23 +132,20 @@ type ServiceOpts = StartServiceArgs[0];
  * This hook can be used to customize the options for starting the service
  * 
  * @param {ServiceOpts} currentOptions Service options
- * @param {CreateUserDefaultAdapterDependencies} currentDependencies Adapter dependencies set on the NBC dashboard
  * @returns {StartServiceArgs} Updated service start args
  */
-export function beforeStartService(currentOptions: ServiceOpts, currentDependencies: CreateUserDefaultAdapterDependencies): StartServiceArgs {
+export function beforeStartService(currentOptions: ServiceOpts): StartServiceArgs {
   /**
    * Add new api endpoints here
    * https://docs.nodeblocks.dev/docs/how-tos/customization/customizing-adapters#adding-new-api-endpoints
    * 
    */
+
   const updatedOptions = {
     ...currentOptions,
     customRoutes: [
       {
-        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          logger.debug("Type of db: ", typeof currentDependencies.db, currentDependencies.db.toString());
-          return handlers.get_children_handler(logger, context, currentDependencies.db);
-        },
+        handler: handlers.get_children_handler,
         method: 'get' as const,
         path: '/children/get',
         validators: [
@@ -151,9 +155,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
         ]
       },
       {
-        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.get_subjects_handler(logger, context, currentDependencies.db);
-        },
+        handler: handlers.get_subjects_handler,
         method: 'get' as const,
         path: '/subjects/get',
         validators: [
@@ -163,9 +165,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
         ]
       },
       {
-        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.create_child_handler(logger, context, currentDependencies.db);
-        },
+        handler: handlers.create_child_handler,
         method: 'post' as const,
         path: '/children/create',
         validators: [
@@ -175,9 +175,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
         ]
       },
       {
-        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.add_review_handler(logger, context, currentDependencies.db);
-        },
+        handler: handlers.add_review_handler,
         method: 'post' as const,
         path: '/children/add_review',
         validators: [
@@ -187,9 +185,7 @@ export function beforeStartService(currentOptions: ServiceOpts, currentDependenc
         ]
       },
       {
-        handler: (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => { 
-          return handlers.get_reviews_handler(logger, context, currentDependencies.db);
-        },
+        handler: handlers.get_reviews_handler,
         method: 'post' as const,
         path: '/children/get_reviews',
         validators: [

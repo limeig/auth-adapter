@@ -1,4 +1,5 @@
 import * as sdk from "@basaldev/blocks-backend-sdk";
+import { connectDb } from "../helpers";
 
 const userCollection = 'users';
 const childrenCollection = 'children';
@@ -30,20 +31,14 @@ class ReviewEntity extends sdk.mongo.BaseMongoEntity {
     }
 }
 
-export async function get_children_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext, db: sdk.mongo.Db | string): Promise<{
+export async function get_children_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
     data: any,
     status: number
 }> {
-    if (typeof db === 'string')
-        return;
-
     try {
-        let query = {
-            Parent: context.body["parent_id"]
-        };
-
-        const result = sdk.mongo.find(logger, db, childrenCollection, { Parent: context.body["parent_id"] });
-
+        await connectDb();
+        console.info("Type of globalthis db: ", typeof globalThis.db);
+        const result = await sdk.mongo.find(logger, globalThis.db, childrenCollection, { Parent: context.body["parent_id"] });
         return {
             data: result,
             status: 200
@@ -57,15 +52,13 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
     };
 }
 
-export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext, db: sdk.mongo.Db | string): Promise<{
+export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
     data: any,
     status: number
 }> {
-    if (typeof db === 'string')
-        return;
-
     try {
-        const result = sdk.mongo.aggregate(logger, db, subjectCollection, [
+        await connectDb();
+        const result = await sdk.mongo.aggregate(logger, globalThis.db, subjectCollection, [
             { $lookup:
                 {
                    from: categoryCollection,
@@ -89,13 +82,10 @@ export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adap
     };
 }
 
-export async function create_child_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext, db: sdk.mongo.Db | string): Promise<{
+export async function create_child_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
     data: any,
     status: number
 }> {
-    if (typeof db === 'string')
-        return;
-
     try {
         const childObjectEntity: ChildEntity = new ChildEntity(
             context.body["child_first_name"],
@@ -105,9 +95,10 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
             undefined
         );
 
+        await connectDb();
         const { id } = await sdk.mongo.create<ChildEntity>(
             logger,
-            db,
+            globalThis.db,
             childrenCollection,
             childObjectEntity
         );
@@ -116,7 +107,7 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
 
         await sdk.mongo.updateMany(
             logger,
-            db,
+            globalThis.db,
             userCollection,
             parent_id,
             {
@@ -134,20 +125,18 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
     };
 }
 
-export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext, db: sdk.mongo.Db | string): Promise<{
+export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
     data: any,
     status: number
-}> {
-    if (typeof db === 'string')
-        return;
-    
+}> {  
     try {
         let query = {
             Subject: context.body["subject_id"],
             Child: context.body["child_id"]
         };
 
-        const result = await sdk.mongo.find(logger, db, reviewCollection, query);
+        await connectDb();
+        const result = await sdk.mongo.find(logger, globalThis.db, reviewCollection, query);
         return {
             data: result,
             status: 200
@@ -161,13 +150,10 @@ export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapt
     };
 }
 
-export async function add_review_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext, db: sdk.mongo.Db | string): Promise<{
+export async function add_review_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
     data: any,
     status: number
-}> {
-    if (typeof db === 'string')
-        return;
-    
+}> {   
     try {
         const reviewObjectEntity: ReviewEntity = new ReviewEntity(
             context.body["date"],
@@ -177,9 +163,10 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             undefined
         );
         
+        await connectDb();
         const id = await sdk.mongo.create(
             logger,
-            db,
+            globalThis.db,
             reviewCollection,
             reviewObjectEntity);
 
@@ -187,7 +174,7 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
 
         await sdk.mongo.updateMany(
             logger,
-            db,
+            globalThis.db,
             childrenCollection,
             child_id, {
             $addToSet: {

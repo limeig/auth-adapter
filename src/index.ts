@@ -1,4 +1,3 @@
-import * as sdk from "@basaldev/blocks-backend-sdk";
 import { defaultAdapter, UserAppConfig, createNodeblocksUserApp } from "@basaldev/blocks-user-service";
 import * as handlers from  "./handlers/handlers";
 import * as validators from  "./validators/validators";
@@ -119,17 +118,16 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  * This hook can be used to perform any post service creation tasks
  */
 export function serviceCreated() {
-  const myConfig = {
+  config.set({
     mongodb: {
-      url: process.env.ADAPTER_DATABASE_URL,
+      url: process.env.ADAPTER_DATABASE_UR,
       databaseName: DATABASE_NAME,
     },
-    migrationsDir: "/src/migrations",
+    migrationsDir: "./src/migrations",
     changelogCollectionName: "changelog",
-    migrationFileExtension: ".js"
-};
-
-  config.set(myConfig);
+    migrationFileExtension: ".ts",
+    useFileHash: false,
+  });
   const migrateDatabase = async () => {
     const { db, client } = await database.connect();
     await up(db, client);

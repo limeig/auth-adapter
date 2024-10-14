@@ -228,10 +228,10 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
             undefined
         );
 
-        await connectDb();
+        let db = await connectDb();
         const id = await sdk.mongo.create(
             logger,
-            globalThis.db,
+            db,
             Collections.taskCollection,
             taskEntity);
 
@@ -253,12 +253,12 @@ export async function complete_task_handler(logger: sdk.Logger, context: sdk.ada
     status: number
 }> {
     try {
-        await connectDb();
+        let db = await connectDb();
         let task_id = { id: context.body["task_id"] };
 
         await sdk.mongo.updateMany(
             logger,
-            globalThis.db,
+            db,
             Collections.taskCollection,
             task_id, {
             $set: {
@@ -284,12 +284,12 @@ export async function deactivate_task_handler(logger: sdk.Logger, context: sdk.a
     status: number
 }> {
     try {
-        await connectDb();
+        let db = await connectDb();
         let task_id = { id: context.body["task_id"] };
 
         await sdk.mongo.updateMany(
             logger,
-            globalThis.db,
+            db,
             Collections.taskCollection,
             task_id, {
             $set: {
@@ -315,13 +315,13 @@ export async function complete_active_tasks_handler(logger: sdk.Logger, context:
     status: number
 }> {
     try {
-        await connectDb();
+        let db = await connectDb();
         let query = { Child: context.body["child_id"],
                       isActive : true };
 
         const number = await sdk.mongo.updateMany(
             logger,
-            globalThis.db,
+            db,
             Collections.taskCollection,
             query, {
             $set: {
@@ -348,7 +348,7 @@ export async function get_tasks_handler(logger: sdk.Logger, context: sdk.adapter
     status: number
 }> {
     try {
-        await connectDb();
+        let db = await connectDb();
         let query = { Child: context.query["child_id"] } as any;
 
         if (context.query["is_active"])
@@ -359,7 +359,7 @@ export async function get_tasks_handler(logger: sdk.Logger, context: sdk.adapter
 
         const result = await sdk.mongo.find(
             logger,
-            globalThis.db,
+            db,
             Collections.taskCollection,
             query
         );

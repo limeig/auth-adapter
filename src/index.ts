@@ -123,7 +123,7 @@ export function serviceCreated() {
       url: process.env.ADAPTER_DATABASE_URL,
       databaseName: DATABASE_NAME,
     },
-    migrationsDir: path.resolve(__dirname, 'src/migrations'),
+    migrationsDir: path.resolve(__dirname),
     changelogCollectionName: "changelog",
     migrationFileExtension: ".ts",
     useFileHash: false,

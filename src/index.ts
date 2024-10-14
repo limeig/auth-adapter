@@ -1,8 +1,9 @@
-import * as sdk from "@basaldev/blocks-backend-sdk";
 import { defaultAdapter, UserAppConfig, createNodeblocksUserApp } from "@basaldev/blocks-user-service";
 import * as handlers from  "./handlers/handlers";
-import {database, up} from 'migrate-mongo';
-
+import * as validators from  "./validators/validators";
+import {config, database, up} from 'migrate-mongo';
+import { DATABASE_NAME } from "./constant";
+const path = require('path');
 /**
  * Access to the configs set on the NBC dashboard based no the adapter manifest(nbc.adapter.json) by process.env
  * 
@@ -117,11 +118,16 @@ export function beforeCreateService(currentConfigs: UserAppConfig): UserAppConfi
  * This hook can be used to perform any post service creation tasks
  */
 export function serviceCreated() {
-  const migrateDatabase = async () => {
-    const { db, client } = await database.connect();
-    await up(db, client);
-  }
-  migrateDatabase();
+  config.set({
+    mongodb: {
+      url: process.env.ADAPTER_DATABASE_URL,
+      databaseName: DATABASE_NAME,
+    },
+    migrationsDir: path.resolve(__dirname),
+    changelogCollectionName: "changelog",
+    migrationFileExtension: ".ts",
+    useFileHash: false,
+  });
 }
 
 type StartServiceArgs = Parameters<ReturnType<typeof createNodeblocksUserApp>['startService']>;
@@ -149,9 +155,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'get' as const,
         path: '/children/get',
         validators: [
-          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            return 200;
-          }
+          validators.get.validate_parent_id
         ]
       },
       {
@@ -159,9 +163,6 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'get' as const,
         path: '/subjects/get',
         validators: [
-          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            return 200;
-          }
         ]
       },
       {
@@ -169,9 +170,10 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'post' as const,
         path: '/children/create',
         validators: [
-          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            return 200;
-          }
+          validators.post.validate_parent_id,
+          validators.post.validate_child_name,
+          validators.post.validate_child_bday,
+          validators.post.validate_subject_list
         ]
       },
       {
@@ -179,19 +181,19 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'post' as const,
         path: '/children/add_review',
         validators: [
-          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            return 200;
-          }
+          validators.post.validate_child_id,
+          validators.post.validate_date, 
+          validators.post.validate_subject_id,
+          validators.post.validate_duration
         ]
       },
       {
         handler: handlers.get_reviews_handler,
-        method: 'post' as const,
+        method: 'get' as const,
         path: '/children/get_reviews',
         validators: [
-          async (logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) => {
-            return 200;
-          }
+          validators.get.validate_child_id,
+          validators.get.validate_subject_id
         ]
       }
     ]
@@ -203,4 +205,10 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
  * A hook function called after the service is started
  * This hook can be used to perform any post service starting tasks
  */
-export function serviceStarted() { }
+export function serviceStarted() {   
+  const migrateDatabase = async () => {
+    const { db, client } = await database.connect();
+    await up(db, client);
+  }
+  migrateDatabase();
+}

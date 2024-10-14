@@ -1,13 +1,9 @@
 import * as sdk from "@basaldev/blocks-backend-sdk";
 import { connectDb } from "../helpers";
+import { Collections } from "../constant";
+import { ObjectId } from 'mongodb';
 
-const userCollection = 'users';
-const childrenCollection = 'children';
-const categoryCollection = 'category';
-const subjectCollection = 'subjects';
-const reviewCollection = 'review';
-
-class ChildEntity extends sdk.mongo.BaseMongoEntity {
+class ChildEntity implements sdk.mongo.BaseMongoEntity {
     constructor(
         public first_name?: string,
         public birthday?: string,
@@ -15,8 +11,13 @@ class ChildEntity extends sdk.mongo.BaseMongoEntity {
         public Parent?: string,
         public Reviews?: Array<string> | undefined
     ) {
-        super();
     }
+    
+    _id: ObjectId; 
+    createdAt: Date; 
+    delFlg: 0 | 1; 
+    id: string; 
+    updatedAt: Date; 
 }
 
 class ReviewEntity extends sdk.mongo.BaseMongoEntity {
@@ -36,20 +37,19 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
     status: number
 }> {
     try {
-        await connectDb();
-        console.info("Type of globalthis db: ", typeof globalThis.db);
-        const result = await sdk.mongo.find(logger, globalThis.db, childrenCollection, { Parent: context.body["parent_id"] });
+        let db = await connectDb();
+        const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, { Parent: context.body["parent_id"] });
         return {
             data: result,
             status: 200
         };
     } catch (e) {
         console.error(e);
+        return {
+            data: false,
+            status: 500
+        };
     }
-    return {
-        data: undefined,
-        status: 500
-    };
 }
 
 export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
@@ -57,11 +57,11 @@ export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adap
     status: number
 }> {
     try {
-        await connectDb();
-        const result = await sdk.mongo.aggregate(logger, globalThis.db, subjectCollection, [
+        let db = await connectDb();
+        const result = await sdk.mongo.aggregate(logger, db, Collections.subjectCollection, [
             { $lookup:
                 {
-                   from: categoryCollection,
+                   from: Collections.categoryCollection,
                    localField: 'category_id',
                    foreignField: 'id',
                    as: 'category'
@@ -75,11 +75,11 @@ export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adap
         };
     } catch (e) {
         console.error(e);
+        return {
+            data: false,
+            status: 500
+        };
     }
-    return {
-        data: undefined,
-        status: 500
-    };
 }
 
 export async function create_child_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
@@ -95,11 +95,11 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
             undefined
         );
 
-        await connectDb();
+        let db = await connectDb();
         const { id } = await sdk.mongo.create<ChildEntity>(
             logger,
-            globalThis.db,
-            childrenCollection,
+            db,
+            Collections.childrenCollection,
             childObjectEntity
         );
 
@@ -107,8 +107,8 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
 
         await sdk.mongo.updateMany(
             logger,
-            globalThis.db,
-            userCollection,
+            db,
+            Collections.userCollection,
             parent_id,
             {
                 $addToSet: {
@@ -116,13 +116,17 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
                 }
             }
         );
+        return {
+            data: id,
+            status: 200
+        };        
     } catch (e) {
         console.error(e);
+        return {
+            data: false,
+            status: 200
+        };
     }
-    return {
-        data: undefined,
-        status: 200
-    };
 }
 
 export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
@@ -135,19 +139,19 @@ export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapt
             Child: context.body["child_id"]
         };
 
-        await connectDb();
-        const result = await sdk.mongo.find(logger, globalThis.db, reviewCollection, query);
+        let db = await connectDb();
+        const result = await sdk.mongo.find(logger, db, Collections.reviewCollection, query);
         return {
             data: result,
             status: 200
         };
     } catch (e) {
         console.error(e);
+        return {
+            data: false,
+            status: 500
+        };
     }
-    return {
-        data: undefined,
-        status: 500
-    };
 }
 
 export async function add_review_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
@@ -158,34 +162,38 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
         const reviewObjectEntity: ReviewEntity = new ReviewEntity(
             context.body["date"],
             context.body["subject_id"],
-            context.body["hours"],
+            context.body["duration"],
             context.body["child_id"],
             undefined
         );
         
-        await connectDb();
+        let db = await connectDb();
         const id = await sdk.mongo.create(
             logger,
-            globalThis.db,
-            reviewCollection,
+            db,
+            Collections.reviewCollection,
             reviewObjectEntity);
 
         let child_id = { id: context.body["child_id"] };
 
         await sdk.mongo.updateMany(
             logger,
-            globalThis.db,
-            childrenCollection,
+            db,
+            Collections.childrenCollection,
             child_id, {
             $addToSet: {
                 Reviews: id
             }
         });
+        return {
+            data: id,
+            status: 200
+        };
     } catch (e) {
         console.error(e);
+        return {
+            data: false,
+            status: 200
+        };
     }
-    return {
-        data: undefined,
-        status: 200
-    };
 }

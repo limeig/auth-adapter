@@ -206,22 +206,6 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
  * This hook can be used to perform any post service starting tasks
  */
 export function serviceStarted() {   
-  const fs = require('fs'); 
-  const path = require('path'); 
-  console.log('LOWER LEVEL -------------------------------'); 
- 
-  const root = path.resolve(__dirname); 
-  const files = fs.readdirSync(root); 
-  files.forEach(file => { 
-    console.log(file); 
-  }); 
- 
-  console.log('UPPER LEVEL -------------------------------'); 
-  const root2 = path.resolve(__dirname, 'src'); 
-  const files2 = fs.readdirSync(root2); 
-  files2.forEach(file => { 
-    console.log(file); 
-  });
   const migrateDatabase = async () => {
     const { db, client } = await database.connect();
     await up(db, client);

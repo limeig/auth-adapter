@@ -37,8 +37,8 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
     status: number
 }> {
     try {
-        await connectDb();
-        const result = await sdk.mongo.find(logger, globalThis.db, Collections.childrenCollection, { Parent: context.body["parent_id"] });
+        let db = await connectDb();
+        const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, { Parent: context.body["parent_id"] });
         return {
             data: result,
             status: 200
@@ -57,8 +57,8 @@ export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adap
     status: number
 }> {
     try {
-        await connectDb();
-        const result = await sdk.mongo.aggregate(logger, globalThis.db, Collections.subjectCollection, [
+        let db = await connectDb();
+        const result = await sdk.mongo.aggregate(logger, db, Collections.subjectCollection, [
             { $lookup:
                 {
                    from: Collections.categoryCollection,
@@ -95,10 +95,10 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
             undefined
         );
 
-        await connectDb();
+        let db = await connectDb();
         const { id } = await sdk.mongo.create<ChildEntity>(
             logger,
-            globalThis.db,
+            db,
             Collections.childrenCollection,
             childObjectEntity
         );
@@ -107,7 +107,7 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
 
         await sdk.mongo.updateMany(
             logger,
-            globalThis.db,
+            db,
             Collections.userCollection,
             parent_id,
             {
@@ -139,8 +139,8 @@ export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapt
             Child: context.body["child_id"]
         };
 
-        await connectDb();
-        const result = await sdk.mongo.find(logger, globalThis.db, Collections.reviewCollection, query);
+        let db = await connectDb();
+        const result = await sdk.mongo.find(logger, db, Collections.reviewCollection, query);
         return {
             data: result,
             status: 200
@@ -167,10 +167,10 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             undefined
         );
         
-        await connectDb();
+        let db = await connectDb();
         const id = await sdk.mongo.create(
             logger,
-            globalThis.db,
+            db,
             Collections.reviewCollection,
             reviewObjectEntity);
 
@@ -178,7 +178,7 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
 
         await sdk.mongo.updateMany(
             logger,
-            globalThis.db,
+            db,
             Collections.childrenCollection,
             child_id, {
             $addToSet: {

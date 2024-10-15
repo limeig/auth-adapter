@@ -102,12 +102,6 @@ export const categories = [
       description: 'If you see stars, you will be the star',
     },
     {
-      id: 'subject_english',
-      category: ['category_humanities', 'category_languages'],
-      name: 'English',
-      description: 'Mathematics and etc',
-    },
-    {
       id: 'subject_french',
       category: ['category_humanities', 'category_languages'],
       name: 'French',

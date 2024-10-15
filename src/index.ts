@@ -202,12 +202,13 @@ export function serviceStarted() {
         url: process.env.ADAPTER_DATABASE_URL,
         databaseName: DATABASE_NAME,
       },
-      migrationsDir: path.resolve(__dirname),
+      migrationsDir: path.resolve(__dirname, 'migrations'),
       changelogCollectionName: "changelog",
       migrationFileExtension: ".ts",
       useFileHash: false,
     });
     const { db, client } = await database.connect();
+    client.db(DATABASE_NAME).command({ ping: 1 });
     const migrated = await up(db, client);
     console.log('Migration finished', migrated);
   }

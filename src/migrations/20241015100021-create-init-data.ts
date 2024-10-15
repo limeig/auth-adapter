@@ -5,6 +5,7 @@ import { categories, subjects } from "./lib/init-data";
 module.exports = {
   async up() {
     try {
+      console.log('DB URL', process.env.ADAPTER_DATABASE_UR)
       const client = new MongoClient(process.env.ADAPTER_DATABASE_UR);
       await client.connect();
       const db = client.db(DATABASE_NAME);

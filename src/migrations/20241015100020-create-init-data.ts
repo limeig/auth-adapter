@@ -5,8 +5,10 @@ import { categories, subjects } from "./lib/init-data";
 module.exports = {
   async up() {
     try {
-      const client = await MongoClient.connect(process.env.ADAPTER_DATABASE_UR);
+      const client = new MongoClient(process.env.ADAPTER_DATABASE_UR);
+      await client.connect();
       const db = client.db(DATABASE_NAME);
+      console.log('PING', await db.command({ ping: 1 }));
 
       const parsedCategories = categories.map((category) => {
         return {
@@ -24,8 +26,6 @@ module.exports = {
         };
       });
       await db.collection(Collections.subjectCollection).insertMany(parsedSubjects);
-
-      console.log("Migrated successfully");
     } catch (e) {
       console.log("Error during migration: ", e);
     }

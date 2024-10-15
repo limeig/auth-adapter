@@ -1,6 +1,7 @@
 import { Collections, DATABASE_NAME } from "../constant";
 import {MongoClient, ObjectId} from 'mongodb';
 import { categories, subjects } from "./lib/init-data";
+import { stringToValidMongoHex } from "./helpers";
 
 module.exports = {
   async up() {
@@ -11,7 +12,7 @@ module.exports = {
       
       const parsedCategories = categories.map((category) => {
         return {
-          _id: new ObjectId(category.id),
+          _id: new ObjectId(stringToValidMongoHex(category.id)),
           ...category,
         };
       });
@@ -19,8 +20,8 @@ module.exports = {
 
       const parsedSubjects = subjects.map((subject) => {
         return {
-          _id: new ObjectId(subject.id),
-          category: subject.category.map((category) => new ObjectId(category)),
+          _id: new ObjectId(stringToValidMongoHex(subject.id)),
+          category: subject.category.map((category) => new ObjectId(stringToValidMongoHex(category))),
           ...subject,
         };
       });

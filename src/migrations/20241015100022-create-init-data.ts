@@ -5,12 +5,10 @@ import { categories, subjects } from "./lib/init-data";
 module.exports = {
   async up() {
     try {
-      console.log('DB URL', process.env.ADAPTER_DATABASE_UR)
-      const client = new MongoClient(process.env.ADAPTER_DATABASE_UR);
+      const client = new MongoClient(process.env.ADAPTER_DATABASE_URL);
       await client.connect();
       const db = client.db(DATABASE_NAME);
-      console.log('PING', await db.command({ ping: 1 }));
-
+      
       const parsedCategories = categories.map((category) => {
         return {
           _id: new ObjectId(category.id),

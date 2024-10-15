@@ -207,8 +207,14 @@ export function serviceStarted() {
       migrationFileExtension: ".ts",
       useFileHash: false,
     });
+    //check files in migrations dir
+    const fs = require('fs');
+    console.log('dir files', fs.readdirSync(path.resolve(__dirname)))
+    const files = fs.readdirSync(path.resolve(__dirname, 'migrations'));
+    console.log("Found files in migrations dir: ", files);
     const { db, client } = await database.connect();
-    client.db(DATABASE_NAME).command({ ping: 1 });
+    const isDbConnected = await client.db(DATABASE_NAME).command({ ping: 1 });
+    console.log('Database connected?', isDbConnected);
     const migrated = await up(db, client);
     console.log('Migration finished', migrated);
   }

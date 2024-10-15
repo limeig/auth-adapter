@@ -204,14 +204,9 @@ export function serviceStarted() {
       },
       migrationsDir: path.resolve(__dirname, 'migrations'),
       changelogCollectionName: "changelog",
-      migrationFileExtension: ".ts",
+      migrationFileExtension: ".js",
       useFileHash: false,
     });
-    //check files in migrations dir
-    const fs = require('fs');
-    console.log('dir files', fs.readdirSync(path.resolve(__dirname)))
-    const files = fs.readdirSync(path.resolve(__dirname, 'migrations'));
-    console.log("Found files in migrations dir: ", files);
     const { db, client } = await database.connect();
     const isDbConnected = await client.db(DATABASE_NAME).command({ ping: 1 });
     console.log('Database connected?', isDbConnected);

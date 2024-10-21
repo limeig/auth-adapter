@@ -1,4 +1,4 @@
 export function stringToValidMongoHex(str: string) {
     const hex = Buffer.from(str).toString('hex');
-    return hex.substring(0, 24);
+    return hex.substring(0, 24)?.padStart(24, '0');
   }

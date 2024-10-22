@@ -181,7 +181,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         method: 'get' as const,
         path: '/tasks/get',
         validators: [
-          validators.post.validate_child_id 
+          validators.get.validate_child_id 
         ]
       },  
       {
@@ -192,7 +192,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
           validators.post.validate_child_id,
           validators.post.validate_subject_id,
           validators.post.validate_completed_flag,
-          validators.post.validate_date, 
+          validators.post.validate_date
         ]
       },
       {

@@ -51,7 +51,7 @@ export async function get_child_handler(logger: sdk.Logger, context: sdk.adapter
     status: number
 }> {
     try {
-        console.debug("get_children_handler", JSON.stringify(context.query));
+        console.debug("get_child_handler", JSON.stringify(context.query));
 
         let db = await connectDb();
         const id: string = context.query['child_id'] as string;

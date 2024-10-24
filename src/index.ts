@@ -140,11 +140,11 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
     ...currentOptions,
     customRoutes: [
       {
-        handler: handlers.get_children_handler,
+        handler: handlers.get_child_handler,
         method: 'get' as const,
         path: '/children/get',
         validators: [
-          validators.get.validate_parent_id
+          validators.get.validate_child_id
         ]
       },
       {

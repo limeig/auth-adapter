@@ -54,7 +54,7 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
         console.debug("get_children_handler", JSON.stringify(context.query));
 
         let db = await connectDb();
-        const id: string =  context.query['parent_id'] as string;
+        const id: string = context.query['parent_id'] as string;
         const result = await sdk.mongo.find(logger, db, Collections.userCollection, {id,});
         return {
             data: { parent_id: context.query["parent_id"],
@@ -113,8 +113,8 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
         const childObjectEntity: ChildEntity = new ChildEntity(
             context.body["child_first_name"],
             context.body["child_birthday"],
-            context.body["subjects_ids"],
-            context.body["parent_id"],
+            (context.body["subjects_ids"] || [])?.map((item: string) => new ObjectId(item)),
+            new ObjectId(context.body["parent_id"]),
             undefined
         );
 

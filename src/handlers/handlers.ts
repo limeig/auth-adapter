@@ -58,7 +58,7 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
         const result = await sdk.mongo.find(logger, db, Collections.userCollection, {id,});
         return {
             data: { parent_id: context.query["parent_id"],
-                    children: result
+                    children: result["Children"]
                   },
             status: 200
         };

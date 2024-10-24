@@ -55,11 +55,12 @@ export async function get_child_handler(logger: sdk.Logger, context: sdk.adapter
 
         let db = await connectDb();
         const id: string = context.query['child_id'] as string;
-        const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, {id,});
+        const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, { id, });
         return {
-            data: { parent_id: context.query["parent_id"],
-                    children: result
-                  },
+            data: {
+                parent_id: context.query["parent_id"],
+                children: result
+            },
             status: 200
         };
     } catch (e) {
@@ -134,8 +135,10 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
             Collections.userCollection,
             parent_id,
             {
-                $addToSet: {
-                    Children: new ObjectId(id)
+                customFields: {
+                    $addToSet: {
+                        Children: new ObjectId(id)
+                    }
                 }
             }
         );
@@ -190,7 +193,7 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             new ObjectId(context.body["task_id"]),
             undefined
         );
-        
+
         let db = await connectDb();
         const { id } = await sdk.mongo.create(
             logger,
@@ -243,7 +246,7 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
             Collections.taskCollection,
             taskEntity);
         return {
-            data: { task_id : id },
+            data: { task_id: id },
             status: 200
         };
     } catch (e) {
@@ -323,8 +326,10 @@ export async function complete_active_tasks_handler(logger: sdk.Logger, context:
 }> {
     try {
         let db = await connectDb();
-        let query = { Child: new ObjectId(context.body["child_id"] as string),
-                      isActive : true };
+        let query = {
+            Child: new ObjectId(context.body["child_id"] as string),
+            isActive: true
+        };
 
         const number = await sdk.mongo.updateMany(
             logger,

@@ -83,7 +83,7 @@ export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adap
                 {
                     from: Collections.categoryCollection,
                     localField: 'category',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'category'
                 }
             }

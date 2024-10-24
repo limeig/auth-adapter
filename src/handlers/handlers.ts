@@ -55,7 +55,7 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
 
         let db = await connectDb();
         const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, 
-                                                  { Parent: new ObjectId(context.query["parent_id"] as string) });
+                                                  { $where: `this.Parent === ${context.query['parent_id']}`});
         return {
             data: { parent_id: context.query["parent_id"],
                     children: result

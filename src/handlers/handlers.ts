@@ -51,6 +51,8 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
     status: number
 }> {
     try {
+        console.debug("get_children_handler", JSON.stringify(context.query));
+
         let db = await connectDb();
         const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, { Parent: context.query["parnet_id"] });
         return {
@@ -73,13 +75,14 @@ export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adap
     status: number
 }> {
     try {
+        console.debug("get_subjects_handler", JSON.stringify(context.query));
         let db = await connectDb();
         const result = await sdk.mongo.aggregate(logger, db, Collections.subjectCollection, [
             {
                 $lookup:
                 {
                     from: Collections.categoryCollection,
-                    localField: 'category_id',
+                    localField: 'category',
                     foreignField: 'id',
                     as: 'category'
                 }
@@ -354,10 +357,10 @@ export async function get_tasks_handler(logger: sdk.Logger, context: sdk.adapter
         let query = { Child: context.query["child_id"] } as any;
 
         if (context.query["is_active"])
-            query.isActive = context.body["is_active"]
+            query.isActive = context.query["is_active"]
 
         if (context.query["subject_id"])
-            query.Subject = context.body["subject_id"]
+            query.Subject = context.query["subject_id"]
 
         const result = await sdk.mongo.find(
             logger,

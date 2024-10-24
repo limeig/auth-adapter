@@ -135,11 +135,7 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
             Collections.userCollection,
             parent_id,
             {
-                customFields: {
-                    $addToSet: {
-                        Children: new ObjectId(id)
-                    }
-                }
+                $addToSet: { "customFields.Children": new ObjectId(id) }
             }
         );
         return {

@@ -46,7 +46,7 @@ class TaskEntity extends sdk.mongo.BaseMongoEntity {
     }
 }
 
-export async function get_children_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
+export async function get_child_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
     data: any,
     status: number
 }> {
@@ -54,11 +54,11 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
         console.debug("get_children_handler", JSON.stringify(context.query));
 
         let db = await connectDb();
-        const id: string = context.query['parent_id'] as string;
-        const result = await sdk.mongo.find(logger, db, Collections.userCollection, {id,});
+        const id: string = context.query['child_id'] as string;
+        const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, {id,});
         return {
             data: { parent_id: context.query["parent_id"],
-                    children: result["Children"]
+                    children: result
                   },
             status: 200
         };

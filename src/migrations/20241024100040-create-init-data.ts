@@ -13,7 +13,8 @@ module.exports = {
       const parsedCategories = categories.map((category) => {
         return {
           _id: new ObjectId(stringToValidMongoHex(category.id)),
-          ...category,
+          name: category.name,
+          description: category.description,
         };
       });
       await db.collection(Collections.categoryCollection).insertMany(parsedCategories);
@@ -21,8 +22,9 @@ module.exports = {
       const parsedSubjects = subjects.map((subject) => {
         return {
           _id: new ObjectId(stringToValidMongoHex(subject.id)),
+          name: subject.name,
+          description: subject.description,
           category: subject.category.map((category) => new ObjectId(stringToValidMongoHex(category))),
-          ...subject,
         };
       });
       await db.collection(Collections.subjectCollection).insertMany(parsedSubjects);

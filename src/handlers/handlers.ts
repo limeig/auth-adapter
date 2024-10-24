@@ -7,8 +7,8 @@ class ChildEntity implements sdk.mongo.BaseMongoEntity {
     constructor(
         public first_name?: string,
         public birthday?: string,
-        public Subjects?: Array<string>,
-        public Parent?: string,
+        public Subjects?: Array<ObjectId>,
+        public Parent?: ObjectId,
         public Reviews?: Array<string> | undefined
     ) {
     }
@@ -23,10 +23,10 @@ class ChildEntity implements sdk.mongo.BaseMongoEntity {
 class ReviewEntity extends sdk.mongo.BaseMongoEntity {
     constructor(
         public date?: string,
-        public Subject?: string,
-        public Child?: string,
+        public Subject?: ObjectId,
+        public Child?: ObjectId,
         public hours?: string,
-        public Task?: string,
+        public Task?: ObjectId,
         public Asessment?: Array<string> | undefined
     ) {
         super();
@@ -35,12 +35,12 @@ class ReviewEntity extends sdk.mongo.BaseMongoEntity {
 
 class TaskEntity extends sdk.mongo.BaseMongoEntity {
     constructor(
-        public Child?: string,
+        public Child?: ObjectId,
         public date?: string,
-        public Subject?: string,
+        public Subject?: ObjectId,
         public isCompleted?: boolean,
         public isActive?: boolean,
-        public Review?: string
+        public Review?: ObjectId
     ) {
         super();
     }
@@ -54,7 +54,8 @@ export async function get_children_handler(logger: sdk.Logger, context: sdk.adap
         console.debug("get_children_handler", JSON.stringify(context.query));
 
         let db = await connectDb();
-        const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, { Parent: context.query["parent_id"] });
+        const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, 
+                                                  { Parent: new ObjectId(context.query["parent_id"] as string) });
         return {
             data: { parent_id: context.query["parent_id"],
                     children: result
@@ -77,6 +78,8 @@ export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adap
     try {
         console.debug("get_subjects_handler", JSON.stringify(context.query));
         let db = await connectDb();
+
+
         const result = await sdk.mongo.aggregate(logger, db, Collections.subjectCollection, [
             {
                 $lookup:
@@ -123,7 +126,7 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
             childObjectEntity
         );
 
-        let parent_id = { id: context.body["parent_id"] };
+        let parent_id = { _id: new ObjectId(context.body["parent_id"] as string) };
 
         await sdk.mongo.updateMany(
             logger,
@@ -132,7 +135,7 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
             parent_id,
             {
                 $addToSet: {
-                    Children: id
+                    Children: new ObjectId(id)
                 }
             }
         );
@@ -155,8 +158,8 @@ export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapt
 }> {
     try {
         let query = {
-            Subject: context.query["subject_id"],
-            Child: context.query["child_id"]
+            Subject: new ObjectId(context.query["subject_id"] as string),
+            Child: new ObjectId(context.query["child_id"] as string)
         };
 
         let db = await connectDb();
@@ -181,21 +184,21 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
     try {
         const reviewObjectEntity: ReviewEntity = new ReviewEntity(
             context.body["date"],
-            context.body["subject_id"],
+            new ObjectId(context.body["subject_id"]),
+            new ObjectId(context.body["child_id"]),
             context.body["duration"],
-            context.body["child_id"],
-            context.body["task_id"],
+            new ObjectId(context.body["task_id"]),
             undefined
         );
         
         let db = await connectDb();
-        const id = await sdk.mongo.create(
+        const { id } = await sdk.mongo.create(
             logger,
             db,
             Collections.reviewCollection,
             reviewObjectEntity);
 
-        let child_id = { id: context.body["child_id"] };
+        let child_id = { _id: new ObjectId(context.body["child_id"]) };
 
         await sdk.mongo.updateMany(
             logger,
@@ -203,7 +206,7 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             Collections.childrenCollection,
             child_id, {
             $addToSet: {
-                Reviews: id
+                Reviews: new ObjectId(id)
             }
         });
         return {
@@ -225,23 +228,22 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
 }> {
     try {
         const taskEntity: TaskEntity = new TaskEntity(
-            context.body["child_id"],
+            new ObjectId(context.body["child_id"]),
             context.body["date"],
-            context.body["subject_id"],
+            new ObjectId(context.body["subject_id"]),
             context.body["is_completed"],
             true,
             undefined
         );
 
         let db = await connectDb();
-        const id = await sdk.mongo.create(
+        const { id } = await sdk.mongo.create(
             logger,
             db,
             Collections.taskCollection,
             taskEntity);
-
         return {
-            data: id,
+            data: { task_id : id },
             status: 200
         };
     } catch (e) {
@@ -259,7 +261,7 @@ export async function complete_task_handler(logger: sdk.Logger, context: sdk.ada
 }> {
     try {
         let db = await connectDb();
-        let task_id = { id: context.body["task_id"] };
+        let task_id = { _id: new ObjectId(context.body["task_id"]) };
 
         await sdk.mongo.updateMany(
             logger,
@@ -272,7 +274,7 @@ export async function complete_task_handler(logger: sdk.Logger, context: sdk.ada
         });
 
         return {
-            data: task_id.id,
+            data: { task_id: task_id._id },
             status: 200
         };
     } catch (e) {
@@ -290,7 +292,7 @@ export async function deactivate_task_handler(logger: sdk.Logger, context: sdk.a
 }> {
     try {
         let db = await connectDb();
-        let task_id = { id: context.body["task_id"] };
+        let task_id = { _id: new ObjectId(context.body["task_id"]) };
 
         await sdk.mongo.updateMany(
             logger,
@@ -303,7 +305,7 @@ export async function deactivate_task_handler(logger: sdk.Logger, context: sdk.a
         });
 
         return {
-            data: task_id.id,
+            data: { task_id: task_id._id },
             status: 200
         };
     } catch (e) {
@@ -321,7 +323,7 @@ export async function complete_active_tasks_handler(logger: sdk.Logger, context:
 }> {
     try {
         let db = await connectDb();
-        let query = { Child: context.body["child_id"],
+        let query = { Child: new ObjectId(context.body["child_id"] as string),
                       isActive : true };
 
         const number = await sdk.mongo.updateMany(
@@ -336,7 +338,7 @@ export async function complete_active_tasks_handler(logger: sdk.Logger, context:
         });
 
         return {
-            data: number,
+            data: { tasks_completed: number },
             status: 200
         };
     } catch (e) {
@@ -354,13 +356,13 @@ export async function get_tasks_handler(logger: sdk.Logger, context: sdk.adapter
 }> {
     try {
         let db = await connectDb();
-        let query = { Child: context.query["child_id"] } as any;
+        let query = { Child: new ObjectId(context.query["child_id"] as string) } as any;
 
         if (context.query["is_active"])
             query.isActive = context.query["is_active"]
 
         if (context.query["subject_id"])
-            query.Subject = context.query["subject_id"]
+            query.Subject = new ObjectId(context.query["subject_id"] as string)
 
         const result = await sdk.mongo.find(
             logger,

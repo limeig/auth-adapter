@@ -27,7 +27,7 @@ class ReviewEntity extends sdk.mongo.BaseMongoEntity {
         public Child?: ObjectId,
         public hours?: string,
         public Task?: ObjectId,
-        public Asessment?: Array<string> | undefined
+        public Assessment?: Array<string> | undefined
     ) {
         super();
     }
@@ -55,7 +55,7 @@ export async function get_child_handler(logger: sdk.Logger, context: sdk.adapter
 
         let db = await connectDb();
         const id: string = context.query['child_id'] as string;
-        const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, { id, });
+        const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, { _id: new ObjectId(id) });
         return {
             data: {
                 children: result

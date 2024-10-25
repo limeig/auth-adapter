@@ -52,7 +52,6 @@ export async function get_child_handler(logger: sdk.Logger, context: sdk.adapter
 }> {
     try {
         console.debug("get_child_handler", JSON.stringify(context.query));
-
         let db = await connectDb();
         const id: string = context.query['child_id'] as string;
         const result = await sdk.mongo.find<ChildEntity>(logger, db, Collections.childrenCollection, {});

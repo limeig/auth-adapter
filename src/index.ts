@@ -41,7 +41,7 @@ export function beforeCreateAdapter(
     customFields: {
       user: [
         {
-          name: 'children',
+          name: 'Children',
           type: 'array' as const
         },
       ]

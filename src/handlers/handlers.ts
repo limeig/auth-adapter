@@ -14,10 +14,10 @@ class ChildEntity implements sdk.mongo.BaseMongoEntity {
     }
 
     _id: ObjectId;
-    createdAt: Date;
+    createdAt: Date  = new Date();
     delFlg: 0 | 1 = 0;
     id: string;
-    updatedAt: Date;
+    updatedAt: Date = new Date();
 }
 
 class ReviewEntity implements sdk.mongo.BaseMongoEntity {
@@ -32,10 +32,10 @@ class ReviewEntity implements sdk.mongo.BaseMongoEntity {
     ) {
     }
     _id: ObjectId;
-    createdAt: Date;
+    createdAt: Date  = new Date();
     delFlg: 0 | 1 = 0;
     id: string;
-    updatedAt: Date;
+    updatedAt: Date = new Date();
 }
 
 class TaskEntity implements sdk.mongo.BaseMongoEntity {
@@ -49,10 +49,10 @@ class TaskEntity implements sdk.mongo.BaseMongoEntity {
     ) {
     }
     _id: ObjectId;
-    createdAt: Date;
+    createdAt: Date  = new Date();
     delFlg: 0 | 1 = 0;
     id: string;
-    updatedAt: Date;
+    updatedAt: Date = new Date();
 }
 
 export async function get_child_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{

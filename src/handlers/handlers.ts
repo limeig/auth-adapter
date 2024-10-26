@@ -15,12 +15,13 @@ class ChildEntity implements sdk.mongo.BaseMongoEntity {
 
     _id: ObjectId;
     createdAt: Date;
-    delFlg: 0 | 1;
+    delFlg: 0 | 1 = 0;
     id: string;
     updatedAt: Date;
 }
 
-class ReviewEntity extends sdk.mongo.BaseMongoEntity {
+class ReviewEntity implements sdk.mongo.BaseMongoEntity {
+
     constructor(
         public date?: string,
         public Subject?: ObjectId,
@@ -29,11 +30,15 @@ class ReviewEntity extends sdk.mongo.BaseMongoEntity {
         public Task?: ObjectId,
         public Assessment?: Array<string> | undefined
     ) {
-        super();
     }
+    _id: ObjectId;
+    createdAt: Date;
+    delFlg: 0 | 1 = 0;
+    id: string;
+    updatedAt: Date;
 }
 
-class TaskEntity extends sdk.mongo.BaseMongoEntity {
+class TaskEntity implements sdk.mongo.BaseMongoEntity {
     constructor(
         public Child?: ObjectId,
         public date?: string,
@@ -42,8 +47,12 @@ class TaskEntity extends sdk.mongo.BaseMongoEntity {
         public isActive?: boolean,
         public Review?: ObjectId
     ) {
-        super();
     }
+    _id: ObjectId;
+    createdAt: Date;
+    delFlg: 0 | 1 = 0;
+    id: string;
+    updatedAt: Date;
 }
 
 export async function get_child_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
@@ -54,7 +63,9 @@ export async function get_child_handler(logger: sdk.Logger, context: sdk.adapter
         console.debug("get_child_handler", JSON.stringify(context.query));
         let db = await connectDb();
         const id: string = context.query['child_id'] as string;
-        const result = await sdk.mongo.find<ChildEntity>(logger, db, Collections.childrenCollection, {});
+        const result = await sdk.mongo.find(logger, db, Collections.childrenCollection, {
+            _id: new ObjectId(id)
+        });
         console.log(result);
         return {
             data: {

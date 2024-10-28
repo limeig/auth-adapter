@@ -265,7 +265,7 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
         let db = await connectDb();
         let query = {
             Child: new ObjectId(context.body["child_id"] as string),
-            Subjects: [new ObjectId(context.body["subject_id"])]
+            Subjects: new ObjectId(context.body["subject_id"])
         };
 
         const result = await sdk.mongo.find(
@@ -277,7 +277,8 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
 
         if (!result.length) {
             return {
-                data: false,
+                data: { code: "wrong_child_subject",
+                        message: "Child does not have such subject" },
                 status: 400
             };        
         }

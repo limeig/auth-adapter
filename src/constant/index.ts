@@ -8,4 +8,7 @@ export const categoryCollection = 'category';
 export const subjectCollection = 'subjects';
 export const reviewCollection = 'review';
 export const taskCollection = 'task';
+export const subjectTimeCollection = "SubjectTime";
+export const base_level_minutes = 10*60;
+export const level_increase = (6000-base_level_minutes)/50;
 }

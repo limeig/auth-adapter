@@ -235,7 +235,35 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
           validators.get.validate_child_id,
           validators.get.validate_subject_id
         ]
-      }
+      },
+      {
+        handler: handlers.get_level_for_subject_handler,
+        method: 'get' as const,
+        path: '/levels/get',
+        validators: [
+          validators.get.validate_child_id,
+          validators.get.validate_subject_id
+
+        ]
+      },
+      {
+        handler: handlers.add_time_for_subject_handler,
+        method: 'post' as const,
+        path: '/levels/post',
+        validators: [
+          validators.post.validate_child_id,
+          validators.post.validate_subject_id,          
+          validators.post.validate_duration
+        ]
+      },
+      {
+        handler: handlers.get_time_for_subject_for_period_handler,
+        method: 'get' as const,
+        path: '/levels/get',
+        validators: [
+          validators.get.validate_subject_id
+        ]
+      },
     ]
   };
   return [updatedOptions];

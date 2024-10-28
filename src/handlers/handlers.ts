@@ -1,6 +1,8 @@
 import * as sdk from "@basaldev/blocks-backend-sdk";
 import { connectDb } from "../helpers";
 import { Collections } from "../constant";
+import { base_level_minutes } from "../constant";
+import { level_increase } from "../constant";
 import { ObjectId } from 'mongodb';
 
 class ChildEntity implements sdk.mongo.BaseMongoEntity {
@@ -35,6 +37,15 @@ class ReviewEntity implements sdk.mongo.BaseMongoEntity {
     delFlg: 0 | 1 = 0;
     id: string;
     updatedAt: Date = new Date();
+}
+
+
+
+function convert_minutes_into_level( minutes:number):number {
+    let b = 2*(base_level_minutes+level_increase)
+    let D = b*b + 8*level_increase*minutes
+    let level = (-b+Math.sqrt(D))/(2*level_increase)
+    return level;
 }
 
 class TaskEntity implements sdk.mongo.BaseMongoEntity {
@@ -427,6 +438,83 @@ export async function get_tasks_handler(logger: sdk.Logger, context: sdk.adapter
         );
         return {
             data: result,
+            status: 200
+        };
+    } catch (e) {
+        console.error(e);
+        return {
+            data: false,
+            status: 500
+        };
+    }
+}
+
+export async function get_level_for_subject_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
+    data: any,
+    status: number
+}> {
+    try {
+        console.debug("get_level_for_subject_handler", JSON.stringify(context.query));
+        let db = await connectDb();
+        let query = {
+            Child: new ObjectId(context.body["child_id"] as string),
+            Subjects: new ObjectId(context.body["subject_id"])
+        };
+        const result = await sdk.mongo.find(
+            logger,
+            db,
+            Collections.subjectTimeCollection,
+            query
+        );
+
+
+        if (!result.length) {
+            return {
+                data: { code: "wrong_subjectTime",
+                        message: "Child does not have such subject" },
+                status: 400
+            };        
+        }
+        return {
+            data: convert_minutes_into_level(result),
+            status: 200
+        };
+    } catch (e) {
+        console.error(e);
+        return {
+            data: false,
+            status: 500
+        };
+    }
+}
+
+
+export async function add_time_for_subject_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
+    data: any,
+    status: number
+}> {
+    try {
+        //todo: I should create a function which initialize subjectTime table
+        console.debug("add_time_for_subject_handler", JSON.stringify(context.query));
+        let db = await connectDb();
+        let query = {
+            Child: new ObjectId(context.body["child_id"] as string),
+            Subjects: new ObjectId(context.body["subject_id"])
+        };
+        let duration = context.body["duration"];
+        let old_value = get_level_for_subject_handler(logger,context)
+        const number = await sdk.mongo.updateMany(
+            logger,
+            db,
+            Collections.taskCollection,
+            query, {
+            $set: {
+                time_m: old_value + duration
+            }
+        });
+
+        return {
+            data: { tasks_completed: number },
             status: 200
         };
     } catch (e) {

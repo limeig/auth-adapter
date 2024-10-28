@@ -12,7 +12,7 @@ export async function get_criteria_handler(logger: sdk.Logger, context: sdk.adap
         const result = await sdk.mongo.find(
             logger,
             db,
-            Collections.taskCollection,
+            Collections.criteriaCollection,
             {}
         );
         return {

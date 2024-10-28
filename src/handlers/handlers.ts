@@ -3,7 +3,7 @@ import { connectDb } from "../helpers";
 import { Collections } from "../constant";
 import { ObjectId } from 'mongodb';
 
-class ChildEntity implements sdk.mongo.BaseMongoEntity {
+class ChildEntity extends sdk.mongo.BaseMongoEntity {
     constructor(
         public first_name?: string,
         public birthday?: Date,
@@ -11,14 +11,26 @@ class ChildEntity implements sdk.mongo.BaseMongoEntity {
         public Parent?: ObjectId,
         public Reviews?: Array<string>
     ) {
+        super();
     }
-
-    _id: ObjectId;
-    createdAt: Date  = new Date();
-    delFlg: 0 | 1 = 0;
-    id: string;
-    updatedAt: Date = new Date();
 }
+
+// class ChildEntity implements sdk.mongo.BaseMongoEntity {
+//     constructor(
+//         public first_name?: string,
+//         public birthday?: Date,
+//         public Subjects?: Array<ObjectId>,
+//         public Parent?: ObjectId,
+//         public Reviews?: Array<string>
+//     ) {
+//     }
+
+//     _id: ObjectId;
+//     createdAt: Date  = new Date();
+//     delFlg: 0 | 1 = 0;
+//     id: string;
+//     updatedAt: Date = new Date();
+// }
 
 class ReviewEntity implements sdk.mongo.BaseMongoEntity {
 
@@ -280,14 +292,14 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
             _id: new ObjectId(context.body["child_id"]),
         };
 
-        const res_child = await sdk.mongo.find(
+        const child_check = await sdk.mongo.find(
             logger,
             db,
             Collections.childrenCollection,
             child_query
         );
 
-        if (!res_child.length) {
+        if (!child_check.length) {
             return {
                 data: { code: "wrong_child_id",
                         message: "No child with such ID" },
@@ -295,22 +307,43 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
             };        
         }
 
-        let query = {
+        let subject_query = {
             _id: new ObjectId(context.body["child_id"]),
             Subjects: new ObjectId(context.body["subject_id"])
         };
 
-        const result = await sdk.mongo.find(
+        const subject_check = await sdk.mongo.find(
             logger,
             db,
             Collections.childrenCollection,
-            query
+            subject_query
         );
 
-        if (!result.length) {
+        if (!subject_check.length) {
             return {
                 data: { code: "wrong_child_subject",
                         message: "Child does not have such subject" },
+                status: 400
+            };        
+        }
+
+        let task_query = {
+            Child: new ObjectId(context.body["child_id"]),
+            Subject: new ObjectId(context.body["subject_id"]),
+            isActive: true
+        };
+
+        const task_check = await sdk.mongo.find(
+            logger,
+            db,
+            Collections.taskCollection,
+            task_query
+        );
+
+        if (task_check.length) {
+            return {
+                data: { code: "subject_task_exists",
+                        message: "Child already has active task for the subject" },
                 status: 400
             };        
         }

@@ -3,7 +3,7 @@ import { connectDb } from "../helpers";
 import { Collections } from "../constant";
 import { ObjectId } from 'mongodb';
 
-class ReviewEntity implements sdk.mongo.BaseMongoEntity {
+class ReviewEntity extends sdk.mongo.BaseMongoEntity {
     constructor(
         public Subject?: ObjectId,
         public Child?: ObjectId,
@@ -11,12 +11,8 @@ class ReviewEntity implements sdk.mongo.BaseMongoEntity {
         public Task?: ObjectId,
         public Assessment?: Array<string> | undefined
     ) {
+        super();
     }
-    _id: ObjectId;
-    createdAt: Date  = new Date();
-    delFlg: 0 | 1 = 0;
-    id: string;
-    updatedAt: Date = new Date();
 }
 
 export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{

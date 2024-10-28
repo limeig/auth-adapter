@@ -146,7 +146,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       {
         handler: handlers.get_child_handler,
         method: 'get' as const,
-        path: '/children/get',
+        path: '/children',
         validators: [
           validators.get.validate_child_id
         ]
@@ -154,7 +154,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       {
         handler: handlers.get_subjects_handler,
         method: 'get' as const,
-        path: '/subjects/get',
+        path: '/subjects',
         validators: [
         ]
       },
@@ -188,7 +188,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       {
         handler: handlers.get_tasks_handler,
         method: 'get' as const,
-        path: '/tasks/get',
+        path: '/tasks',
         validators: [
           validators.get.validate_child_id 
         ]
@@ -241,7 +241,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       {
         handler: handlers.get_reviews_handler,
         method: 'get' as const,
-        path: '/reviews/get',
+        path: '/reviews',
         validators: [
           validators.get.validate_child_id,
           validators.get.validate_subject_id

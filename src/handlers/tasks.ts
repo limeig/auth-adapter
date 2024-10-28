@@ -4,8 +4,7 @@ import { connectDb } from "../helpers";
 import { Collections } from "../constant";
 import { ObjectId } from 'mongodb';
 
-
-class TaskEntity implements sdk.mongo.BaseMongoEntity {
+class TaskEntity extends sdk.mongo.BaseMongoEntity {
     constructor(
         public Child?: ObjectId,
         public Subject?: ObjectId,
@@ -13,12 +12,8 @@ class TaskEntity implements sdk.mongo.BaseMongoEntity {
         public isActive?: boolean,
         public Review?: ObjectId
     ) {
+        super();
     }
-    _id: ObjectId;
-    createdAt: Date  = new Date();
-    delFlg: 0 | 1 = 0;
-    id: string;
-    updatedAt: Date = new Date();
 }
 
 export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{

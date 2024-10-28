@@ -16,7 +16,7 @@ import { ObjectId } from 'mongodb';
 //     }
 // }
 
-class ChildEntity implements sdk.mongo.BaseMongoEntity {
+class ChildEntity extends sdk.mongo.BaseMongoEntity {
     constructor(
         public first_name?: string,
         public birthday?: Date,
@@ -24,13 +24,8 @@ class ChildEntity implements sdk.mongo.BaseMongoEntity {
         public Parent?: ObjectId,
         public Reviews?: Array<string>
     ) {
+        super();
     }
-
-    _id: ObjectId;
-    createdAt: Date  = new Date();
-    delFlg: 0 | 1 = 0;
-    id: string;
-    updatedAt: Date = new Date();
 }
 
 export async function get_child_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{

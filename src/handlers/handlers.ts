@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb';
 class ChildEntity implements sdk.mongo.BaseMongoEntity {
     constructor(
         public first_name?: string,
-        public birthday?: string,
+        public birthday?: Date,
         public Subjects?: Array<ObjectId>,
         public Parent?: ObjectId,
         public Reviews?: Array<string> | undefined
@@ -23,7 +23,6 @@ class ChildEntity implements sdk.mongo.BaseMongoEntity {
 class ReviewEntity implements sdk.mongo.BaseMongoEntity {
 
     constructor(
-        public date?: string,
         public Subject?: ObjectId,
         public Child?: ObjectId,
         public hours?: string,
@@ -41,7 +40,6 @@ class ReviewEntity implements sdk.mongo.BaseMongoEntity {
 class TaskEntity implements sdk.mongo.BaseMongoEntity {
     constructor(
         public Child?: ObjectId,
-        public date?: string,
         public Subject?: ObjectId,
         public isCompleted?: boolean,
         public isActive?: boolean,
@@ -221,7 +219,6 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
 }> {
     try {
         const reviewObjectEntity: ReviewEntity = new ReviewEntity(
-            context.body["date"],
             new ObjectId(context.body["subject_id"]),
             new ObjectId(context.body["child_id"]),
             context.body["duration"],
@@ -265,16 +262,34 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
     status: number
 }> {
     try {
+        let db = await connectDb();
+        let query = {
+            Child: new ObjectId(context.body["child_id"] as string),
+            Subjects: [new ObjectId(context.body["subject_id"])]
+        };
+
+        const result = await sdk.mongo.find(
+            logger,
+            db,
+            Collections.childrenCollection,
+            query
+        );
+
+        if (!result.length) {
+            return {
+                data: false,
+                status: 400
+            };        
+        }
+
         const taskEntity: TaskEntity = new TaskEntity(
             new ObjectId(context.body["child_id"]),
-            context.body["date"],
             new ObjectId(context.body["subject_id"]),
             context.body["is_completed"],
             true,
             undefined
         );
 
-        let db = await connectDb();
         const { id } = await sdk.mongo.create(
             logger,
             db,
@@ -376,7 +391,6 @@ export async function complete_active_tasks_handler(logger: sdk.Logger, context:
                 isActive: false
             }
         });
-
         return {
             data: { tasks_completed: number },
             status: 200

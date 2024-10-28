@@ -3,19 +3,7 @@ import { connectDb } from "../helpers";
 import { Collections } from "../constant";
 import { ObjectId } from 'mongodb';
 
-class ChildEntity extends sdk.mongo.BaseMongoEntity {
-    constructor(
-        public first_name?: string,
-        public birthday?: Date,
-        public Subjects?: Array<ObjectId>,
-        public Parent?: ObjectId,
-        public Reviews?: Array<string>
-    ) {
-        super();
-    }
-}
-
-// class ChildEntity implements sdk.mongo.BaseMongoEntity {
+// class ChildEntity extends sdk.mongo.BaseMongoEntity {
 //     constructor(
 //         public first_name?: string,
 //         public birthday?: Date,
@@ -23,14 +11,26 @@ class ChildEntity extends sdk.mongo.BaseMongoEntity {
 //         public Parent?: ObjectId,
 //         public Reviews?: Array<string>
 //     ) {
+//         super();
 //     }
-
-//     _id: ObjectId;
-//     createdAt: Date  = new Date();
-//     delFlg: 0 | 1 = 0;
-//     id: string;
-//     updatedAt: Date = new Date();
 // }
+
+class ChildEntity implements sdk.mongo.BaseMongoEntity {
+    constructor(
+        public first_name?: string,
+        public birthday?: Date,
+        public Subjects?: Array<ObjectId>,
+        public Parent?: ObjectId,
+        public Reviews?: Array<string>
+    ) {
+    }
+
+    _id: ObjectId;
+    createdAt: Date  = new Date();
+    delFlg: 0 | 1 = 0;
+    id: string;
+    updatedAt: Date = new Date();
+}
 
 class ReviewEntity implements sdk.mongo.BaseMongoEntity {
 

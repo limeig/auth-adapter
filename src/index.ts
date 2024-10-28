@@ -168,7 +168,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
       {
         handler: handlers.update_child_subjects_handler,
         method: 'post' as const,
-        path: '/children/add_subject',
+        path: '/children/update_subjects',
         validators: [
           validators.post.validate_child_id,
           validators.post.validate_subject_list

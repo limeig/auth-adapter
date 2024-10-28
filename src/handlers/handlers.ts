@@ -251,8 +251,9 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             logger,
             db,
             Collections.taskCollection,
-            task_id, 
-            { Review: new ObjectId(id) }       
+            task_id, { 
+                $set : { Review: new ObjectId(id) }  
+            }     
         );
 
         return {

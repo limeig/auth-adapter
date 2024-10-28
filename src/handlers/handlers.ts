@@ -230,6 +230,27 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
     status: number
 }> {
     try {
+        let db = await connectDb();
+
+        let review_query = {
+            Task: new ObjectId(context.body["task_id"]),
+        };
+
+        const review_check = await sdk.mongo.find(
+            logger,
+            db,
+            Collections.reviewCollection,
+            review_query
+        );
+
+        if (review_check.length) {
+            return {
+                data: { code: "duplicate_task_review",
+                        message: "Review for this task already exits" },
+                status: 400
+            };        
+        }
+
         const reviewObjectEntity: ReviewEntity = new ReviewEntity(
             new ObjectId(context.body["subject_id"]),
             new ObjectId(context.body["child_id"]),
@@ -238,7 +259,6 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             undefined
         );
 
-        let db = await connectDb();
         const { id } = await sdk.mongo.create(
             logger,
             db,
@@ -287,25 +307,6 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
 }> {
     try {
         let db = await connectDb();
-
-        let child_query = {
-            _id: new ObjectId(context.body["child_id"]),
-        };
-
-        const child_check = await sdk.mongo.find(
-            logger,
-            db,
-            Collections.childrenCollection,
-            child_query
-        );
-
-        if (!child_check.length) {
-            return {
-                data: { code: "wrong_child_id",
-                        message: "No child with such ID" },
-                status: 400
-            };        
-        }
 
         let subject_query = {
             _id: new ObjectId(context.body["child_id"]),

@@ -264,7 +264,7 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
     try {
         let db = await connectDb();
         let query = {
-            Child: new ObjectId(context.body["child_id"]),
+            _id: new ObjectId(context.body["child_id"]),
             Subjects: new ObjectId(context.body["subject_id"])
         };
 

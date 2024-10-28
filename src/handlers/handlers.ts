@@ -90,7 +90,6 @@ export async function get_subjects_handler(logger: sdk.Logger, context: sdk.adap
         console.debug("get_subjects_handler", JSON.stringify(context.query));
         let db = await connectDb();
 
-
         const result = await sdk.mongo.aggregate(logger, db, Collections.subjectCollection, [
             {
                 $lookup:
@@ -156,7 +155,37 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
         console.error(e);
         return {
             data: false,
+            status: 500
+        };
+    }
+}
+
+export async function update_child_subjects_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
+    data: any,
+    status: number
+}> {
+    try {
+        let db = await connectDb();
+        let child_id = { _id: new ObjectId(context.body["child_id"] as string) };
+
+        await sdk.mongo.updateMany(
+            logger,
+            db,
+            Collections.childrenCollection,
+            child_id,
+            {
+                $set: { Subjects: (context.body["subjects_ids"] || [])?.map((item: string) => new ObjectId(item)) }
+            }
+        );
+        return {
+            data: true,
             status: 200
+        };
+    } catch (e) {
+        console.error(e);
+        return {
+            data: false,
+            status: 500
         };
     }
 }

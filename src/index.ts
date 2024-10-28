@@ -235,7 +235,8 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
           validators.post.validate_child_id,
           validators.post.validate_subject_id,
           validators.post.validate_task_id,
-          validators.post.validate_duration
+          validators.post.validate_duration,
+          validators.post.validate_assessment
         ]
       },
       {

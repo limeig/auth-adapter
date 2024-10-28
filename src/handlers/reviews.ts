@@ -9,7 +9,7 @@ class ReviewEntity extends sdk.mongo.BaseMongoEntity {
         public Child?: ObjectId,
         public hours?: number,
         public Task?: ObjectId,
-        public Assessment?: Array<string> | undefined
+        public assessment?: Array<Record<string, number>>
     ) {
         super();
     }
@@ -71,7 +71,7 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             new ObjectId(context.body["child_id"]),
             context.body["duration"],
             new ObjectId(context.body["task_id"]),
-            undefined
+            context.body["assessment"]
         );
 
         const { id } = await sdk.mongo.create(

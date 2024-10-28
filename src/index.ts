@@ -1,9 +1,13 @@
 import { defaultAdapter, UserAppConfig, createNodeblocksUserApp } from "@basaldev/blocks-user-service";
-import * as handlers from  "./handlers/handlers";
+import routes from './handlers'
+
 import * as validators from  "./validators/validators";
 import {config, database, up} from 'migrate-mongo';
 import { DATABASE_NAME } from "./constant";
 const path = require('path');
+
+const {handlers} = routes
+
 /**
  * Access to the configs set on the NBC dashboard based no the adapter manifest(nbc.adapter.json) by process.env
  * 

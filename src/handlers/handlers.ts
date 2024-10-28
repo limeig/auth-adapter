@@ -9,7 +9,7 @@ class ChildEntity implements sdk.mongo.BaseMongoEntity {
         public birthday?: Date,
         public Subjects?: Array<ObjectId>,
         public Parent?: ObjectId,
-        public Reviews?: Array<string> | undefined
+        public Reviews?: Array<string>
     ) {
     }
 
@@ -25,7 +25,7 @@ class ReviewEntity implements sdk.mongo.BaseMongoEntity {
     constructor(
         public Subject?: ObjectId,
         public Child?: ObjectId,
-        public hours?: string,
+        public hours?: number,
         public Task?: ObjectId,
         public Assessment?: Array<string> | undefined
     ) {
@@ -123,7 +123,7 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
             context.body["child_birthday"],
             (context.body["subjects_ids"] || [])?.map((item: string) => new ObjectId(item)),
             new ObjectId(context.body["parent_id"]),
-            undefined
+            []
         );
 
         let db = await connectDb();
@@ -244,6 +244,17 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
                 Reviews: new ObjectId(id)
             }
         });
+
+        let task_id = { _id: new ObjectId(context.body["task_id"]) };
+
+        await sdk.mongo.updateMany(
+            logger,
+            db,
+            Collections.taskCollection,
+            task_id, 
+            { Review: new ObjectId(id) }       
+        );
+
         return {
             data: id,
             status: 200

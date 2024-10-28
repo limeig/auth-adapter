@@ -9,11 +9,11 @@ export async function get_criteria_handler(logger: sdk.Logger, context: sdk.adap
 }> {
     try {
         let db = await connectDb();
-        const result = await sdk.mongo.find(
+        const result = await sdk.mongo.aggregate(
             logger,
             db,
             Collections.criteriaCollection,
-            {}
+            []
         );
         return {
             data: result,

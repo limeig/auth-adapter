@@ -241,3 +241,73 @@ export const categories = [
         'I hope you don`t live in an apartment building. Sorry it is just a joke. In fact, your piano playing is so beautiful.',
     },
   ];
+
+  export const criteria = [ 
+    { 
+      id: 'completion', 
+      name: 'Completion of assignments', 
+      description: 'Demonstrating consistency in finishing tasks according to given instructions and timelines, showcasing commitment to the learning process and responsibility in meeting academic requirements.',
+      1: 'Child often fails to complete assigned tasks or submits incomplete work.',
+      2: 'Child completes assignments inconsistently and may require reminders to finish tasks on time.',
+      3: 'Child completes most assigned tasks but occasionally misses deadlines or overlooks specific requirements.',
+      4: 'Child consistently submits completed assignments on time and meets all outlined requirements.', 
+      5: 'Child demonstrates a high level of commitment to completing assignments with accuracy and attention to detail.', 
+      6: 'Child goes above and beyond in completing assignments, showcasing exceptional effort, creativity, and thoroughness in the work submitted.'
+    }, 
+    { 
+      id: 'understanding', 
+      name: 'Understanding of concepts', 
+      description: 'Grasping the fundamental ideas and principles conveyed in the subject matter, showing comprehension and practical application of acquired knowledge beyond mere memorization.',
+      1: 'Child struggles to grasp basic concepts and frequently requires additional explanations.',
+      2: 'Child demonstrates a limited understanding of fundamental concepts and may need extra guidance to comprehend complex topics.',
+      3: 'Child shows a satisfactory understanding of most concepts but may have difficulty applying them independently.',
+      4: 'Child displays a solid grasp of key concepts and can effectively apply them to solve problems or analyze situations.',
+      5: 'Child exhibits a deep understanding of complex concepts and demonstrates the ability to synthesize information to form insightful connections.',
+      6: 'Child showcases mastery of concepts, displaying a nuanced understanding and the capability to explain, analyze, and critically evaluate concepts with depth and clarity.'
+    },
+    { 
+      id: 'participation', 
+      name: 'Participation', 
+      description: 'Actively engaging in the lesson by offering insights, asking thoughtful questions, and actively participating in discussions to enhance learning. Participation entails a willingness to collaborate with the parent, contribute ideas, and demonstrate a keen interest in the subject matter being taught during homeschooling sessions.',
+      1: 'Child is consistently disengaged and seldom contributes during lessons.',
+      2: 'Child participates minimally, offering brief responses and showing reluctance to engage in discussions.',
+      3: 'Child engages in discussions but may need encouragement to actively contribute ideas or ask questions.',
+      4: 'Child actively participates in lessons, shares insights, asks relevant questions, and collaborates effectively with the parent.',
+      5: 'Child consistently participates in discussions, demonstrates critical thinking, and contributes thoughtfully to enhance the learning experience.',
+      6: 'Child takes a leadership role in discussions, offers original perspectives, asks probing questions, and fosters a dynamic learning environment through active engagement.'
+    },
+    { 
+      id: 'organization', 
+      name: 'Organization', 
+      description: 'Effectively managing materials, time, and tasks to maintain order and structure, demonstrating the ability to prioritize responsibilities and establish disciplined study habits.',
+      1: 'Child frequently became distracted during lessons, often looking around the room or playing with toys instead of focusing on the task at hand. They needed regular redirection to stay on topic.',
+      2: 'Child showed some ability to concentrate but often needed prompts to remain focused. They could complete short tasks but would lose interest in longer activities and start daydreaming or fidgeting.',
+      3: 'Child was able to concentrate on tasks for moderate periods, typically completing short assignments with minimal distractions. However, during group activities, they sometimes struggled to maintain focus if peers were talking or moving around.',
+      4: 'Child demonstrated good concentration during individual tasks, often working diligently without needing reminders. They were able to engage in discussions and follow along with lessons, although they occasionally became distracted by external noises.',
+      5: 'Child maintained strong concentration skills, often diving deeply into assignments and displaying a clear focus on the material. They managed to tune out distractions from siblings or background noise, allowing them to work independently for extended periods.',
+      6: 'Child exhibited exceptional concentration, able to focus intensely on complex tasks or projects for long stretches without losing track of their objectives. They utilized techniques such as time-blocking to enhance their focus and frequently sought out quiet spaces to maximize productivity.',
+    },
+    { 
+      id: 'self_motivation', 
+      name: 'Self motivation and independence', 
+      description: "This criterion evaluates the child's ability to take ownership of their learning, actively seek out additional resources, set personal goals, and exhibit a proactive approach to mastering the material in a homeschooling setting.",
+      1: 'Child waits for constant guidance and reminders to complete tasks, showing no initiative.',
+      2: 'Child attempts tasks but frequently seeks help and lacks a proactive approach.',
+      3: 'Child shows some independence but often relies on parental guidance to stay on task.',
+      4: 'Child takes initiative to start assignments but occasionally needs reminders to stay focused.',
+      5: 'Child demonstrates strong independence, completing tasks with minimal supervision.',
+      6: 'Child consistently shows high self-motivation, setting personal goals and exploring additional resources without prompting.'
+    },
+    { 
+      id: 'communication', 
+      name: 'Communication', 
+      description: 'Effectively conveying ideas, thoughts, and information clearly through verbal, written, or non-verbal means, listening actively, showcasing strong interpersonal skills in expressing thoughts and engaging in discussions.',
+      1: 'Child struggles to express ideas clearly, often lacking coherence in verbal or written communication.',
+      2: 'Child communicates basic ideas but may have difficulty articulating thoughts or expressing concepts in a cohesive manner.',
+      3: 'Child demonstrates adequate communication skills, effectively conveying thoughts and ideas with moderate clarity and coherence.',
+      4: 'Child exhibits strong communication skills, articulating thoughts clearly, engaging in effective dialogue, and expressing ideas with confidence.',
+      5: 'Child communicates with precision and eloquence, engaging in compelling discussions, and conveying complex ideas fluently and persuasively.',
+      6: 'Child showcases exceptional communication proficiency, demonstrating mastery in conveying ideas concisely, articulately, and persuasively across various mediums with poise and sophistication.'
+    },
+  ]; 
+ 

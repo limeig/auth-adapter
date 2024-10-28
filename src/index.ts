@@ -159,6 +159,13 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         ]
       },
       {
+        handler: handlers.get_criteria_handler,
+        method: 'get' as const,
+        path: '/criteria',
+        validators: [
+        ]
+      },
+      {
         handler: handlers.create_child_handler,
         method: 'post' as const,
         path: '/children/create',

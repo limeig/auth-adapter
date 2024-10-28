@@ -2,6 +2,7 @@ import * as children  from './children';
 import * as reviews  from './reviews';
 import * as subjects  from './subjects';
 import * as tasks  from './tasks';
+import * as criteria  from './criteria';
 
 
 export default {
@@ -10,5 +11,6 @@ export default {
         ...tasks,
         ...subjects,
         ...reviews,
+        ...criteria,
     }
 }

@@ -263,6 +263,26 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
 }> {
     try {
         let db = await connectDb();
+
+        let child_query = {
+            _id: new ObjectId(context.body["child_id"]),
+        };
+
+        const res_child = await sdk.mongo.find(
+            logger,
+            db,
+            Collections.childrenCollection,
+            child_query
+        );
+
+        if (!res_child.length) {
+            return {
+                data: { code: "wrong_child_id",
+                        message: "No child with such ID" },
+                status: 400
+            };        
+        }
+
         let query = {
             _id: new ObjectId(context.body["child_id"]),
             Subjects: new ObjectId(context.body["subject_id"])

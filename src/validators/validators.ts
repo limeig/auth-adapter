@@ -113,7 +113,7 @@ export namespace post {
         return 200;
     }
     export async function validate_completed_flag(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) {
-        if (!context.body["is_completed"]) throw new sdk.NBError({
+        if (typeof context.body["is_completed"] === 'undefined') throw new sdk.NBError({
             code: 'invalid_post_request',
             httpCode: 400,
             message: 'is_completed is required',

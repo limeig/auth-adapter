@@ -264,7 +264,7 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
     try {
         let db = await connectDb();
         let query = {
-            Child: new ObjectId(context.body["child_id"] as string),
+            Child: new ObjectId(context.body["child_id"]),
             Subjects: new ObjectId(context.body["subject_id"])
         };
 
@@ -411,10 +411,10 @@ export async function get_tasks_handler(logger: sdk.Logger, context: sdk.adapter
 }> {
     try {
         let db = await connectDb();
-        let query = { Child: new ObjectId(context.query["child_id"] as string) } as any;
-
-        if (context.query["is_active"])
-            query.isActive = context.query["is_active"]
+        let query = { 
+            Child: new ObjectId(context.query["child_id"] as string), 
+            isActive: true 
+        } as any;
 
         if (context.query["subject_id"])
             query.Subject = new ObjectId(context.query["subject_id"] as string)

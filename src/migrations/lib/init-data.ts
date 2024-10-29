@@ -277,9 +277,9 @@ export const categories = [
       6: 'Child takes a leadership role in discussions, offers original perspectives, asks probing questions, and fosters a dynamic learning environment through active engagement.'
     },
     { 
-      id: 'organization', 
-      name: 'Organization', 
-      description: 'Effectively managing materials, time, and tasks to maintain order and structure, demonstrating the ability to prioritize responsibilities and establish disciplined study habits.',
+      id: 'concentration', 
+      name: 'Concentration', 
+      description: 'Refers to the ability of a child to maintain focus and attention on tasks or lessons. This criterion evaluates how well the child can engage with the material, resist distractions, and sustain effort over time. A child’s level of concentration can significantly impact their learning outcomes, productivity, and overall engagement.',
       1: 'Child frequently became distracted during lessons, often looking around the room or playing with toys instead of focusing on the task at hand. They needed regular redirection to stay on topic.',
       2: 'Child showed some ability to concentrate but often needed prompts to remain focused. They could complete short tasks but would lose interest in longer activities and start daydreaming or fidgeting.',
       3: 'Child was able to concentrate on tasks for moderate periods, typically completing short assignments with minimal distractions. However, during group activities, they sometimes struggled to maintain focus if peers were talking or moving around.',

@@ -90,7 +90,7 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             child_id
         ))[0];
 
-        const childLevel = new Map(child.levels)
+        const childLevel = new Map(Object.entries(child.levels || {}) )
 
         if (!childLevel.has(context.body["subject_id"]))
             childLevel.set(context.body["subject_id"], 0);

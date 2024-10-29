@@ -103,9 +103,12 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             Collections.childrenCollection,
             child_id, {
             $addToSet: {
-                Reviews: new ObjectId(id),
+                Reviews: new ObjectId(id)
+            },
+            $set : {
                 levels: childLevel
             }
+
         });
         return {
             data: id,

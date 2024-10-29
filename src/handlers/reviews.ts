@@ -90,10 +90,12 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             child_id
         ))[0];
 
-        if (!child.levels.has(context.body["subject_id"]))
-            child.levels.set(context.body["subject_id"], 0);
+        const childLevel = new Map(child.levels)
 
-        child.levels.set(context.body["subject_id"], child.levels.get(context.body["subject_id"]) + 1);
+        if (!childLevel.has(context.body["subject_id"]))
+            childLevel.set(context.body["subject_id"], 0);
+
+        childLevel.set(context.body["subject_id"], childLevel.get(context.body["subject_id"]) + 1);
 
         await sdk.mongo.updateMany(
             logger,
@@ -102,7 +104,7 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             child_id, {
             $addToSet: {
                 Reviews: new ObjectId(id),
-                levels: child.levels
+                levels: childLevel
             }
         });
         return {

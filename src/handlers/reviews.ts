@@ -111,7 +111,7 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
 
         });
         return {
-            data: id,
+            data: childLevel,
             status: 200
         };
     } catch (e) {

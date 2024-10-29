@@ -4,29 +4,7 @@ import { connectDb } from "../helpers";
 import { Collections } from "../constant";
 import { ObjectId } from 'mongodb';
 
-// class ChildEntity extends sdk.mongo.BaseMongoEntity {
-//     constructor(
-//         public first_name?: string,
-//         public birthday?: Date,
-//         public Subjects?: Array<ObjectId>,
-//         public Parent?: ObjectId,
-//         public Reviews?: Array<string>
-//     ) {
-//         super();
-//     }
-// }
-
-class ChildEntity extends sdk.mongo.BaseMongoEntity {
-    constructor(
-        public first_name?: string,
-        public birthday?: Date,
-        public Subjects?: Array<ObjectId>,
-        public Parent?: ObjectId,
-        public Reviews?: Array<string>
-    ) {
-        super();
-    }
-}
+import { ChildEntity } from './entities'
 
 export async function get_child_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
     data: any,

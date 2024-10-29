@@ -3,17 +3,7 @@ import { connectDb } from "../helpers";
 import { Collections } from "../constant";
 import { ObjectId } from 'mongodb';
 
-class ReviewEntity extends sdk.mongo.BaseMongoEntity {
-    constructor(
-        public Subject?: ObjectId,
-        public Child?: ObjectId,
-        public hours?: number,
-        public Task?: ObjectId,
-        public assessment?: Array<Record<string, number>>
-    ) {
-        super();
-    }
-}
+import { ChildEntity, ReviewEntity } from './entities'
 
 export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
     data: any,
@@ -80,18 +70,6 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             Collections.reviewCollection,
             reviewObjectEntity);
 
-        let child_id = { _id: new ObjectId(context.body["child_id"]) };
-
-        await sdk.mongo.updateMany(
-            logger,
-            db,
-            Collections.childrenCollection,
-            child_id, {
-            $addToSet: {
-                Reviews: new ObjectId(id)
-            }
-        });
-
         let task_id = { _id: new ObjectId(context.body["task_id"]) };
 
         await sdk.mongo.updateMany(
@@ -103,6 +81,30 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             }     
         );
 
+        let child_id = { _id: new ObjectId(context.body["child_id"]) };
+
+        const child: ChildEntity = (await sdk.mongo.find(
+            logger,
+            db,
+            Collections.childrenCollection,
+            child_id
+        ))[0];
+
+        if (!child.levels.has(context.body["subject_id"]))
+            child.levels.set(context.body["subject_id"], 0);
+
+        child.levels.set(context.body["subject_id"], child.levels.get(context.body["subject_id"]) + 1);
+
+        await sdk.mongo.updateMany(
+            logger,
+            db,
+            Collections.childrenCollection,
+            child_id, {
+            $addToSet: {
+                Reviews: new ObjectId(id),
+                levels: child.levels
+            }
+        });
         return {
             data: id,
             status: 200

@@ -110,8 +110,9 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             }
 
         });
+        const object = JSON.parse(JSON.stringify(Object.fromEntries(childLevel)));
         return {
-            data: childLevel,
+            data: object,
             status: 200
         };
     } catch (e) {

@@ -84,7 +84,11 @@ async function check_achievement(logger: sdk.Logger, child_id: ObjectId, achieve
             logger,
             db,
             Collections.achievementCollection,
-            [{ name: achievement_name }]
+            [            {
+                $match: {
+                    name: { $eq: achievement_name }
+                },
+            }]
         );
 
         if (!achievements.length){

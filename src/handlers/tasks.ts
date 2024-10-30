@@ -10,7 +10,8 @@ class TaskEntity extends sdk.mongo.BaseMongoEntity {
         public Subject?: ObjectId,
         public isCompleted?: boolean,
         public isActive?: boolean,
-        public Review?: ObjectId
+        public Review?: ObjectId,
+        public description?: string
     ) {
         super();
     }
@@ -69,7 +70,8 @@ export async function add_task_handler(logger: sdk.Logger, context: sdk.adapter.
             new ObjectId(context.body["subject_id"]),
             context.body["is_completed"],
             true,
-            undefined
+            undefined,
+            ''
         );
 
         const { id } = await sdk.mongo.create(

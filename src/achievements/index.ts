@@ -92,14 +92,18 @@ async function check_achievement(logger: sdk.Logger, child_id: ObjectId, achieve
         );
 
         if (!achievements.length){
-            console.log("Achievement ", achievement_name, " not found");
+            console.error("Achievement ", achievement_name, " not found");
             return false;
         }
 
+        console.log(achievements);
         const childAchievements = new Map(Object.entries(child[0].Achievements || {}))
 
         if (childAchievements.get(achievements[0].name))
+        {
+            console.log("Achievement ", achievement_name, " already set");
             return false;
+        }
 
         childAchievements.set(achievements[0].name, true);
         await sdk.mongo.updateMany(
@@ -114,7 +118,7 @@ async function check_achievement(logger: sdk.Logger, child_id: ObjectId, achieve
 
             });
 
-        return false;
+        return true;
     } catch (e) {
         console.error(e);
         return false;

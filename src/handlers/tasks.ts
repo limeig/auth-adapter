@@ -185,7 +185,7 @@ export async function complete_active_tasks_handler(logger: sdk.Logger, context:
             }
         });
 
-        achievements.check_first_day_achievement(logger, query.Child);
+        console.log("Achievement: ", achievements.check_first_day_achievement(logger, query.Child));
         return {
             data: { tasks_deactivated: number },
             status: 200

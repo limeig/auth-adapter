@@ -115,7 +115,7 @@ async function check_achievement(logger: sdk.Logger, child_id: ObjectId, achieve
             { _id: child_id },
             {
                 $set: {
-                    levels: childAchievements
+                    Achievements: childAchievements
                 }
 
             });

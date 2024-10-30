@@ -43,27 +43,29 @@ async function check_level(logger: sdk.Logger, child_id: ObjectId, level: number
 }
 
 export async function check_level_achievements(logger: sdk.Logger, child_id: ObjectId): Promise<boolean> {
-    return check_level_5_achievement(logger, child_id)  ||
-           check_level_10_achievement(logger, child_id) ||
-           check_level_20_achievement(logger, child_id);
+    const [res1, res2, res3] = await Promise.all([check_level_5_achievement(logger, child_id), 
+                                                 check_level_10_achievement(logger, child_id),
+                                                 check_level_20_achievement(logger, child_id)]);
+
+    return res1 || res2 || res3;
 }
 
 async function check_level_5_achievement(logger: sdk.Logger, child_id: ObjectId): Promise<boolean> {
-    if (check_level(logger, child_id, 5))
+    if (await check_level(logger, child_id, 5))
         return check_achievement(logger, child_id, reach_level_5);
 
     return false;
 }
 
 async function check_level_10_achievement(logger: sdk.Logger, child_id: ObjectId): Promise<boolean> {
-    if (check_level(logger, child_id, 10))
+    if (await check_level(logger, child_id, 10))
         return check_achievement(logger, child_id, reach_level_10);
 
     return false
 }
 
 async function check_level_20_achievement(logger: sdk.Logger, child_id: ObjectId): Promise<boolean> {
-    if (check_level(logger, child_id, 20))
+    if (await check_level(logger, child_id, 20))
         return check_achievement(logger, child_id, reach_level_20);
 
     return false

@@ -112,8 +112,8 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
 
         });
 
-        check_level_achievements(logger, new ObjectId(context.body["child_id"]));
-        
+        await check_level_achievements(logger, new ObjectId(context.body["child_id"]));
+
         const object = JSON.parse(JSON.stringify(Object.fromEntries(childLevel)));
         return {
             data: object,

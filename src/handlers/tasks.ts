@@ -118,7 +118,7 @@ export async function complete_task_handler(logger: sdk.Logger, context: sdk.ada
             task_id
         );
 
-        achievements.check_first_task_achievement(logger, tasks[0].Child);
+        await achievements.check_first_task_achievement(logger, tasks[0].Child);
 
         return {
             data: { task_id: task_id._id },
@@ -185,7 +185,7 @@ export async function complete_active_tasks_handler(logger: sdk.Logger, context:
             }
         });
 
-        console.log("Achievement: ", achievements.check_first_day_achievement(logger, query.Child));
+        console.log("Achievement: ", await achievements.check_first_day_achievement(logger, query.Child));
         return {
             data: { tasks_deactivated: number },
             status: 200

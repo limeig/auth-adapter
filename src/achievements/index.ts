@@ -100,14 +100,14 @@ async function check_achievement(logger: sdk.Logger, child_id: ObjectId, achieve
 
         console.log(achievements);
         const childAchievements = new Map(Object.entries(child[0].Achievements || {}))
-
-        if (childAchievements.get(achievements[0]._id))
+        const id = new ObjectId(achievements[0]._id)?.toString();
+        if (childAchievements.get(id))
         {
             console.log("Achievement ", achievement_name, " already set");
             return false;
         }
 
-        childAchievements.set(achievements[0]._id, true);
+        childAchievements.set(id, true);
         await sdk.mongo.updateMany(
             logger,
             db,

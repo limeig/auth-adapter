@@ -166,6 +166,13 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
         ]
       },
       {
+        handler: handlers.get_achievements_handler,
+        method: 'get' as const,
+        path: '/achievements',
+        validators: [
+        ]
+      },
+      {
         handler: handlers.create_child_handler,
         method: 'post' as const,
         path: '/children/create',

@@ -42,6 +42,7 @@ export async function create_child_handler(logger: sdk.Logger, context: sdk.adap
         const childObjectEntity: ChildEntity = new ChildEntity(
             context.body["child_first_name"],
             context.body["child_birthday"],
+            context.body["child_age"],
             (context.body["subjects_ids"] || [])?.map((item: string) => new ObjectId(item)),
             new ObjectId(context.body["parent_id"]),
             []

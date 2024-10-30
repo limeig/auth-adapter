@@ -173,6 +173,7 @@ export function beforeStartService(currentOptions: ServiceOpts): StartServiceArg
           validators.post.validate_parent_id,
           validators.post.validate_child_name,
           validators.post.validate_child_bday,
+          validators.post.validate_child_age,
           validators.post.validate_subject_list
         ]
       },

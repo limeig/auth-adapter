@@ -5,6 +5,7 @@ export class ChildEntity extends sdk.mongo.BaseMongoEntity {
     constructor(
         public first_name?: string,
         public birthday?: Date,
+        public age?: number,
         public Subjects?: Array<ObjectId>,
         public Parent?: ObjectId,
         public Reviews?: Array<string>,

@@ -67,6 +67,16 @@ export namespace post {
         return 200;
     }
 
+    export async function validate_child_age(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) {
+        if (!context.body["child_age"]) throw new sdk.NBError({
+            code: 'invalid_post_request',
+            httpCode: 400,
+            message: 'child_age is required',
+        });
+
+        return 200;
+    }
+
     export async function validate_child_id(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext) {
         if (!context.body["child_id"]) throw new sdk.NBError({
             code: 'invalid_post_request',

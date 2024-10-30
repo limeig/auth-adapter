@@ -311,3 +311,36 @@ export const categories = [
     },
   ]; 
  
+  export const achievements = [ 
+    { 
+      _id: 'complete_day', 
+      name: 'First Day Completed',
+      description: 'Complete the first day', 
+    }, 
+    { 
+      _id: 'complete_task', 
+      name: 'Task Master',
+      description: 'Complete the first task', 
+    },
+    {
+      _id: 'reach_level_5',
+      name: 'Champion',
+      description: 'Reach level 5 in any subject',
+    },
+    {
+      _id: 'generate_task',
+      name: 'Task Generator',
+      description: 'Generate a task',
+    },
+    {
+      _id: 'reach_level_10',
+      name: 'Level 10 Achiever',
+      description: 'Reach level 10 in any subject',
+    },
+    {
+      _id: 'reach_level_20',
+      name: 'Level 20 Expert',
+      description: 'Reach level 20 in any subject',
+    }
+  ]; 
+ 

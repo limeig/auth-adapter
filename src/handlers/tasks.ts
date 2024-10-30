@@ -3,6 +3,7 @@ import * as sdk from "@basaldev/blocks-backend-sdk";
 import { connectDb } from "../helpers";
 import { Collections } from "../constant";
 import { ObjectId } from 'mongodb';
+import * as achievements from "../achievements";
 
 class TaskEntity extends sdk.mongo.BaseMongoEntity {
     constructor(
@@ -110,6 +111,15 @@ export async function complete_task_handler(logger: sdk.Logger, context: sdk.ada
             }
         });
 
+        const tasks: TaskEntity[] = await sdk.mongo.find(
+            logger,
+            db,
+            Collections.taskCollection,
+            task_id
+        );
+
+        achievements.check_first_task_achievement(logger, tasks[0].Child);
+
         return {
             data: { task_id: task_id._id },
             status: 200
@@ -171,12 +181,13 @@ export async function complete_active_tasks_handler(logger: sdk.Logger, context:
             Collections.taskCollection,
             query, {
             $set: {
-                isCompleted: true,
                 isActive: false
             }
         });
+
+        achievements.check_first_day_achievement(logger, query.Child);
         return {
-            data: { tasks_completed: number },
+            data: { tasks_deactivated: number },
             status: 200
         };
     } catch (e) {

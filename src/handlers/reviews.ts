@@ -4,6 +4,7 @@ import { Collections } from "../constant";
 import { ObjectId } from 'mongodb';
 
 import { ChildEntity, ReviewEntity } from './entities'
+import { check_level_achievements } from "../achievements";
 
 export async function get_reviews_handler(logger: sdk.Logger, context: sdk.adapter.AdapterHandlerContext): Promise<{
     data: any,
@@ -110,6 +111,9 @@ export async function add_review_handler(logger: sdk.Logger, context: sdk.adapte
             }
 
         });
+
+        check_level_achievements(logger, new ObjectId(context.body["child_id"]));
+        
         const object = JSON.parse(JSON.stringify(Object.fromEntries(childLevel)));
         return {
             data: object,

@@ -9,11 +9,13 @@ export class ChildEntity extends sdk.mongo.BaseMongoEntity {
         public Subjects?: Array<ObjectId>,
         public Parent?: ObjectId,
         public Reviews?: Array<string>,
-        public levels?: Map<string, number>
+        public levels?: Map<string, number>,
+        public Achievements?: Map<string, boolean>
     ) {
         super();
     }
 }
+
 export class ReviewEntity extends sdk.mongo.BaseMongoEntity {
     constructor(
         public Subject?: ObjectId,
@@ -21,6 +23,15 @@ export class ReviewEntity extends sdk.mongo.BaseMongoEntity {
         public hours?: number,
         public Task?: ObjectId,
         public assessment?: Map<string, number>
+    ) {
+        super();
+    }
+}
+
+export class AchievementEntity extends sdk.mongo.BaseMongoEntity {
+    constructor(
+        public name?: string,
+        public description?: string,
     ) {
         super();
     }

@@ -2,7 +2,7 @@ import * as sdk from "@basaldev/blocks-backend-sdk";
 import { connectDb } from "../helpers";
 import { Collections } from "../constant";
 import { ObjectId } from 'mongodb';
-import { ChildEntity, AchievementEntity } from '../handlers/entities'
+import { ChildEntity } from '../handlers/entities'
 
 export const complete_day = 'First Day Completed';
 export const complete_task = 'Task Master';
@@ -80,15 +80,17 @@ async function check_achievement(logger: sdk.Logger, child_id: ObjectId, achieve
             { _id: child_id }
         );
 
-        const achievements: AchievementEntity[] = await sdk.mongo.find(
+        const achievements = await sdk.mongo.aggregate(
             logger,
             db,
             Collections.achievementCollection,
-            { name: achievement_name }
+            [{ name: achievement_name }]
         );
 
-        if (!achievements.length)
+        if (!achievements.length){
+            console.log("Achievement ", achievement_name, " not found");
             return false;
+        }
 
         const childAchievements = new Map(Object.entries(child[0].Achievements || {}))
 

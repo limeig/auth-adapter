@@ -313,27 +313,27 @@ export const categories = [
  
   export const achievements = [ 
     { 
-      _id: 'complete_day', 
+      _id: 'day_complete', 
       name: 'First Day Completed',
       description: 'Complete the first day', 
     }, 
     { 
-      _id: 'complete_task', 
+      _id: 'task_complete', 
       name: 'Task Master',
       description: 'Complete the first task', 
     },
     {
-      _id: 'reach_level_5',
+      _id: '5_reach_level',
       name: 'Champion',
       description: 'Reach level 5 in any subject',
     },
     {
-      _id: 'reach_level_10',
+      _id: '10_reach_level',
       name: 'Level 10 Achiever',
       description: 'Reach level 10 in any subject',
     },
     {
-      _id: 'reach_level_20',
+      _id: '20_reach_level',
       name: 'Level 20 Expert',
       description: 'Reach level 20 in any subject',
     }

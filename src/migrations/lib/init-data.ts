@@ -328,11 +328,6 @@ export const categories = [
       description: 'Reach level 5 in any subject',
     },
     {
-      _id: 'generate_task',
-      name: 'Task Generator',
-      description: 'Generate a task',
-    },
-    {
       _id: 'reach_level_10',
       name: 'Level 10 Achiever',
       description: 'Reach level 10 in any subject',
